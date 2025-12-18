@@ -272,7 +272,10 @@
               <h1
                 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 leading-tight"
               >
-                <span :class="heroTitleClasses"> HAI KIMSRENG </span>
+                <span class="inline-flex items-center">
+                  <span class="mr-1.5 sm:mr-2 md:mr-2.5 lg:mr-3" :class="heroTitleClasses">❖</span>
+                  <span :class="heroTitleClasses">HAI KIMSRENG</span>
+                </span>
               </h1>
               <h2 class="text-xl sm:text-2xl md:text-3xl mb-4 md:mb-6" :class="heroSubtitleClasses">
                 <span :class="heroSubtitleSpan1">Software Engineer</span> &
@@ -315,9 +318,16 @@
                 <div
                   v-for="tech in mainTech"
                   :key="tech"
-                  class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border transition-all duration-300 group cursor-pointer"
+                  class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border transition-all duration-300 group cursor-pointer flex items-center gap-2"
                   :class="techStackItemClasses"
                 >
+                  <!-- Tech Stack Logo -->
+                  <img
+                    :src="getTechLogo(tech)"
+                    :alt="tech"
+                    class="w-4 h-4 sm:w-5 sm:h-5 object-contain"
+                  />
+
                   <span :class="techStackTextClasses">
                     {{ tech }}
                   </span>
@@ -540,7 +550,7 @@
                     <div
                       class="absolute khmer-flower"
                       :class="{
-                        '-bottom-2 -left-4 sm:-bottom-5 sm:-left-5 md:-bottom-4 md:-left-10 lg:-bottom-7 lg:-left-7': true,
+                        '-bottom-2 -left-4 sm:-bottom-5 sm:-left-5 md:-bottom-4 md:-left-10 lg:-bottom-5 lg:-left-7': true,
                       }"
                       style="--rotation: 12deg; animation-delay: 1s"
                     >
@@ -700,88 +710,88 @@
                   <div
                     class="absolute badge-float"
                     :class="[
-                      'text-white rounded-lg shadow-lg transform rotate-6 z-30 border',
-                      'px-2 py-1 text-xs -top-6 -right-6',
-                      'sm:px-3 sm:py-1.5 sm:text-sm sm:-top-7 sm:-right-7',
-                      'md:px-3 md:py-1.5 md:text-sm md:-top-8 md:-right-8',
-                      'lg:px-4 lg:py-2 lg:text-sm lg:-top-9 lg:-right-9',
+                      'rounded-lg shadow-lg transform rotate-6 z-30 border bg-white',
+                      'px-2 py-1 -top-6 -right-6',
+                      'sm:px-2 sm:py-1 sm:-top-7 sm:-right-7',
+                      'md:px-2 md:py-1 md:-top-8 md:-right-8',
+                      'lg:px-2 lg:py-1 lg:-top-9 lg:-right-9',
                       floatingBadgeClasses,
                       darkMode ? 'border-gray-600' : 'border-gray-500',
                     ]"
                     style="animation-delay: 0s"
                   >
-                    <div class="font-bold flex items-center">
-                      <div
-                        class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full mr-1 sm:mr-2 badge-dot"
-                        :class="darkMode ? 'bg-gray-300' : 'bg-gray-600'"
-                      ></div>
-                      Laravel
+                    <div class="flex items-center justify-center">
+                      <img
+                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Laravel.svg/1200px-Laravel.svg.png"
+                        alt="Laravel"
+                        class="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 lg:w-6 lg:h-6 object-contain"
+                      />
                     </div>
                   </div>
 
                   <div
                     class="absolute badge-float"
                     :class="[
-                      'text-white rounded-lg shadow-lg transform -rotate-6 z-30 border',
-                      'px-2 py-1 text-xs -bottom-6 -left-6',
-                      'sm:px-3 sm:py-1.5 sm:text-sm sm:-bottom-7 sm:-left-7',
-                      'md:px-3 md:py-1.5 md:text-sm md:-bottom-8 md:-left-8',
-                      'lg:px-4 lg:py-2 lg:text-sm lg:-bottom-9 lg:-left-9',
+                      'rounded-lg shadow-lg transform -rotate-6 z-30 border bg-white',
+                      'px-2 py-1 -bottom-6 -left-6',
+                      'sm:px-2 sm:py-1 sm:-bottom-7 sm:-left-7',
+                      'md:px-2 md:py-1 md:-bottom-8 md:-left-8',
+                      'lg:px-2 lg:py-1 lg:-bottom-6 lg:-left-7',
                       floatingBadgeClasses,
                       darkMode ? 'border-gray-600' : 'border-gray-500',
                     ]"
                     style="animation-delay: 0.3s"
                   >
-                    <div class="font-bold flex items-center">
-                      <div
-                        class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full mr-1 sm:mr-2 badge-dot"
-                        :class="darkMode ? 'bg-gray-300' : 'bg-gray-600'"
-                      ></div>
-                      Flutter
+                    <div class="flex items-center justify-center">
+                      <img
+                        src="https://juststickers.in/wp-content/uploads/2019/01/flutter.png"
+                        alt="Flutter"
+                        class="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 lg:w-6 lg:h-6 object-contain"
+                      />
                     </div>
                   </div>
 
                   <div
                     class="absolute badge-float"
                     :class="[
-                      'text-white rounded-lg shadow-lg z-30 border',
-                      'px-2 py-1 text-xs top-1/2 -right-8',
-                      'sm:px-3 sm:py-1.5 sm:text-sm sm:top-1/2 sm:-right-9',
-                      'md:px-3 md:py-1.5 md:text-sm md:top-1/2 md:-right-10',
-                      'lg:px-4 lg:py-2 lg:text-sm lg:top-1/2 lg:-right-12',
+                      'rounded-lg shadow-lg z-30 border bg-white',
+                      'px-2 py-1 top-1/2 -right-8',
+                      'sm:px-2 sm:py-1.5 sm:top-1/2 sm:-right-9',
+                      'md:px-2 md:py-1.5 md:top-1/2 md:-right-10',
+                      'lg:px-2 lg:py-1.5 lg:top-1/2 lg:-right-12',
                       floatingBadgeClasses,
                       darkMode ? 'border-gray-600' : 'border-gray-500',
                     ]"
                     style="animation-delay: 0.6s"
                   >
-                    <div class="font-bold flex items-center">
-                      <div
-                        class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full mr-1 sm:mr-2 badge-dot"
-                        :class="darkMode ? 'bg-gray-300' : 'bg-gray-600'"
-                      ></div>
-                      Next.js
+                    <div class="flex items-center justify-center">
+                      <img
+                        src="https://logo.svgcdn.com/devicon/nextjs-original.png"
+                        alt="Next.js"
+                        class="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 lg:w-6 lg:h-6 object-contain"
+                      />
                     </div>
                   </div>
 
                   <div
                     class="absolute badge-float"
                     :class="[
-                      'text-white rounded-lg shadow-lg z-30 border',
-                      'px-2 py-1 text-xs top-1/2 -left-8',
-                      'sm:px-3 sm:py-1.5 sm:text-sm sm:top-1/2 sm:-left-9',
-                      'md:px-3 md:py-1.5 md:text-sm md:top-1/2 md:-left-10',
-                      'lg:px-4 lg:py-2 lg:text-sm lg:top-1/2 lg:-left-12',
+                      'rounded-lg shadow-lg z-30 border bg-white',
+                      'px-2 py-1 top-1/2 -left-8',
+                      'sm:px-2 sm:py-1.5 sm:top-1/2 sm:-left-9',
+                      'md:px-2 md:py-1.5 md:top-1/2 md:-left-10',
+                      'lg:px-2 lg:py-1.5 lg:top-1/2 lg:-left-12',
                       floatingBadgeClasses,
                       darkMode ? 'border-gray-600' : 'border-gray-500',
                     ]"
                     style="animation-delay: 0.9s"
                   >
-                    <div class="font-bold flex items-center">
-                      <div
-                        class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full mr-1 sm:mr-2 badge-dot"
-                        :class="darkMode ? 'bg-gray-300' : 'bg-gray-600'"
-                      ></div>
-                      Vue.js
+                    <div class="flex items-center justify-center">
+                      <img
+                        src="https://vuejs.org/images/logo.png"
+                        alt="Vue.js"
+                        class="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 lg:w-6 lg:h-6 object-contain"
+                      />
                     </div>
                   </div>
 
@@ -807,102 +817,173 @@
 
                 <!-- Info Card Below Image -->
                 <div
-                  class="mt-8 sm:mt-8 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border shadow-2xl max-w-sm sm:max-w-md mx-auto"
+                  class="mt-8 sm:mt-8 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border shadow-2xl max-w-sm sm:max-w-md mx-auto relative overflow-hidden"
                   :class="infoCardClasses"
                 >
-                  <div class="flex items-center justify-between mb-3 sm:mb-4">
-                    <div>
-                      <h3 class="text-lg sm:text-xl font-bold" :class="infoCardTitleClasses">
-                        HAI KIMSRENG
-                      </h3>
-                      <p :class="infoCardSubtitleClasses">Software Engineer</p>
-                    </div>
+                  <!-- Flower Banner Background -->
+                  <div class="absolute inset-0 z-0 overflow-hidden opacity-30">
+                    <img
+                      src="../assets/images/kh_flower.png"
+                      alt="Khmer Flower Banner"
+                      class="w-full h-full object-cover"
+                      :style="{
+                        transform: 'scale(1.1)',
+                        filter: darkMode
+                          ? 'brightness(0.4) contrast(1.2)'
+                          : 'brightness(0.9) contrast(1.1)',
+                      }"
+                    />
+                    <!-- Gradient overlay for better text readability -->
                     <div
-                      class="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors duration-300"
-                      :class="infoCardIconClasses"
-                    >
-                      <svg
-                        class="w-5 h-5 sm:w-6 sm:h-6 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-                        />
-                      </svg>
-                    </div>
+                      class="absolute inset-0"
+                      :class="
+                        darkMode
+                          ? 'bg-gradient-to-br from-gray-900/80 via-gray-900/60 to-gray-900/80'
+                          : 'bg-gradient-to-br from-white/80 via-white/60 to-white/80'
+                      "
+                    ></div>
+
+                    <!-- Decorative border overlay -->
+                    <div
+                      class="absolute inset-0 border-2 rounded-2xl"
+                      :class="darkMode ? 'border-blue-500/20' : 'border-blue-400/20'"
+                    ></div>
                   </div>
 
-                  <div class="space-y-2 sm:space-y-3">
-                    <div class="flex items-center" :class="infoCardTextClasses">
-                      <svg
-                        class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                  <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-3 sm:mb-4">
+                      <div>
+                        <h3 class="text-lg sm:text-xl font-bold" :class="infoCardTitleClasses">
+                          ❖ HAI KIMSRENG
+                        </h3>
+                        <p :class="infoCardSubtitleClasses">Software Engineer</p>
+                      </div>
+                      <div
+                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors duration-300 relative"
+                        :class="infoCardIconClasses"
                       >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                        />
-                      </svg>
-                      <span>Full-Stack & Mobile Developer</span>
+                        <!-- Decorative flower pattern on icon -->
+                        <svg
+                          class="w-5 h-5 sm:w-6 sm:h-6 text-white relative z-10"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                          />
+                        </svg>
+                      </div>
                     </div>
-                    <div class="flex items-center" :class="infoCardTextClasses">
-                      <svg
-                        class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                        />
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                      <span>Phnom Penh, Cambodia</span>
-                    </div>
-                    <div class="flex items-center" :class="infoCardTextClasses">
-                      <svg
-                        class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      <span>Available for opportunities</span>
-                    </div>
-                  </div>
 
-                  <div class="mt-4 sm:mt-6 pt-3 sm:pt-6 border-t" :class="infoCardBorderClasses">
-                    <div class="flex justify-center space-x-3 sm:space-x-4">
-                      <button @click="scrollTo('contact')" :class="infoCardLinkClasses">
-                        Contact Me
-                      </button>
-                      <span :class="infoCardDividerClasses">•</span>
-                      <button @click="scrollTo('projects')" :class="infoCardLinkClasses">
-                        View Work
-                      </button>
+                    <div class="space-y-2 sm:space-y-3">
+                      <div class="flex items-center" :class="infoCardTextClasses">
+                        <svg
+                          class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                          />
+                        </svg>
+                        <span>Full-Stack & Mobile Developer</span>
+                      </div>
+                      <div class="flex items-center" :class="infoCardTextClasses">
+                        <svg
+                          class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                        <span>Phnom Penh, Cambodia</span>
+                      </div>
+                      <div class="flex items-center" :class="infoCardTextClasses">
+                        <svg
+                          class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <span>Available for opportunities</span>
+                      </div>
+                    </div>
+
+                    <div class="mt-4 sm:mt-6 pt-3 sm:pt-6 border-t" :class="infoCardBorderClasses">
+                      <div class="flex justify-center space-x-3 sm:space-x-4">
+                        <button
+                          @click="scrollTo('contact')"
+                          :class="infoCardLinkClasses"
+                          class="flex items-center gap-1.5 sm:gap-2"
+                        >
+                          <!-- Contact Me Icon -->
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-4 w-4 sm:h-5 sm:w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
+                            />
+                          </svg>
+
+                          Contact Me
+                        </button>
+                        <span :class="infoCardDividerClasses">•</span>
+                        <button
+                          @click="scrollTo('projects')"
+                          :class="infoCardLinkClasses"
+                          class="flex items-center gap-1.5 sm:gap-2"
+                        >
+                          <!-- View Work Icon -->
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-4 w-4 sm:h-5 sm:w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                            />
+                          </svg>
+                          View Work
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1143,7 +1224,7 @@
           </div>
           <div ref="aboutRight" class="opacity-0">
             <h3 class="text-lg sm:text-xl font-bold mb-3 md:mb-4" :class="competenciesTitleClasses">
-              Core Competencies
+              ❖ Core Competencies
             </h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
               <div
@@ -1209,25 +1290,39 @@
             v-for="(exp, index) in experiences"
             :key="index"
             :ref="`exp-${index}`"
-            class="opacity-0"
+            class="opacity-0 relative overflow-hidden"
           >
             <div
-              class="rounded-xl p-4 sm:p-6 shadow-lg transition-colors duration-300"
+              class="rounded-xl p-4 sm:p-6 shadow-lg transition-colors duration-300 relative z-10 overflow-hidden"
               :class="experienceCardClasses"
             >
-              <div class="flex flex-col md:flex-row justify-between mb-3 sm:mb-4">
+              <!-- Background Pattern - Right Side -->
+              <div
+                class="absolute bottom-0 right-0 h-full w-1/4 md:w-1/3 opacity-10 md:opacity-20 pointer-events-none z-0"
+              >
+                <img
+                  src="../assets/images/kbach_kh.png"
+                  alt="Khmer Kbach Pattern"
+                  class="h-full w-full object-contain object-right-bottom"
+                />
+              </div>
+
+              <div class="flex flex-col md:flex-row justify-between mb-3 sm:mb-4 relative z-10">
                 <h3
                   class="text-lg sm:text-xl font-bold mb-2 md:mb-0"
                   :class="experienceTitleClasses"
                 >
-                  {{ exp.title }}
+                  ❖ {{ exp.title }}
                 </h3>
                 <div :class="experiencePeriodClasses">{{ exp.period }}</div>
               </div>
-              <p class="mb-4 md:mb-6 text-sm sm:text-base" :class="experienceDescriptionClasses">
+              <p
+                class="mb-4 md:mb-6 text-sm sm:text-base relative z-10"
+                :class="experienceDescriptionClasses"
+              >
                 {{ exp.description }}
               </p>
-              <div class="flex flex-wrap gap-2 mb-3 sm:mb-4">
+              <div class="flex flex-wrap gap-2 mb-3 sm:mb-4 relative z-10">
                 <span
                   v-for="tech in exp.technologies"
                   :key="tech"
@@ -1237,7 +1332,7 @@
                   {{ tech }}
                 </span>
               </div>
-              <ul class="space-y-1 sm:space-y-2">
+              <ul class="space-y-1 sm:space-y-2 relative z-10">
                 <li
                   v-for="(detail, detailIndex) in exp.details"
                   :key="detailIndex"
@@ -1299,12 +1394,27 @@
             v-for="project in projects"
             :key="project.id"
             :ref="`project-${project.id}`"
-            class="opacity-0 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
+            class="opacity-0 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 relative group"
             :class="projectCardClasses"
           >
-            <div class="p-4 sm:p-6">
+            <!-- Background Effects -->
+            <div
+              class="absolute inset-0 bg-gradient-to-br from-blue-100/30 via-purple-100/20 to-pink-100/30 dark:from-blue-400/10 dark:via-purple-100/10 dark:to-black/10 pointer-events-none z-0"
+            ></div>
+
+            <!-- Background Effects - Geometric Accents -->
+            <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+              <div
+                class="absolute -top-6 -right-6 w-32 h-32 border-2 border-gray-300 dark:border-current rounded-full opacity-40 dark:opacity-20 group-hover:opacity-60 dark:group-hover:opacity-30 transition-opacity duration-300"
+              ></div>
+              <div
+                class="absolute -bottom-6 -left-6 w-40 h-40 border-2 border-gray-300 dark:border-current transform rotate-45 opacity-40 dark:opacity-20 group-hover:opacity-60 dark:group-hover:opacity-30 transition-opacity duration-300"
+              ></div>
+            </div>
+
+            <div class="relative z-10 p-4 sm:p-6">
               <div class="font-bold text-lg sm:text-xl mb-1 sm:mb-2" :class="projectTitleClasses">
-                {{ project.name }}
+                ❖ {{ project.name }}
               </div>
               <div class="text-sm mb-3 sm:mb-4" :class="projectYearClasses">{{ project.year }}</div>
               <p class="mb-4 sm:mb-6 text-sm sm:text-base" :class="projectDescriptionClasses">
@@ -1314,7 +1424,7 @@
                 <span
                   v-for="tech in project.technologies"
                   :key="tech"
-                  class="px-2 sm:px-3 py-1 rounded-full text-xs transition-colors duration-300"
+                  class="px-2 sm:px-3 py-1 rounded-full text-xs transition-colors duration-300 relative z-20"
                   :class="projectTechClasses"
                 >
                   {{ tech }}
@@ -1370,7 +1480,7 @@
           :class="educationContentClasses"
         >
           <h3 class="text-xl sm:text-2xl font-bold mb-1 sm:mb-2" :class="educationDegreeClasses">
-            Bachelor of Engineering in Information & Communication Technology (ICT)
+            ❖ Bachelor of Engineering in Information & Communication Technology (ICT)
           </h3>
           <div class="text-sm sm:text-lg mb-4 sm:mb-6" :class="educationInstitutionClasses">
             Institute of Technology of Cambodia (ITC) - 2021 - Present
@@ -1380,13 +1490,57 @@
             <div
               v-for="year in educationYears"
               :key="year.year"
-              class="p-4 sm:p-6 rounded-lg transition-colors duration-300"
-              :class="educationYearCardClasses"
+              class="p-4 sm:p-6 rounded-lg transition-colors duration-300 relative overflow-hidden border-l-4"
+              :class="[
+                educationYearCardClasses,
+                year.year === 'Foundation'
+                  ? 'border-blue-500'
+                  : year.year === 'Year 2'
+                    ? 'border-green-500'
+                    : year.year === 'Year 3'
+                      ? 'border-purple-500'
+                      : year.year === 'Year 4'
+                        ? 'border-orange-500'
+                        : 'border-pink-500',
+              ]"
             >
+              <!-- Subtle Binary Pattern -->
+              <div class="absolute bottom-2 right-2 opacity-10 dark:opacity-20 text-xs font-mono">
+                1010{{ year.year.slice(-1) }}0101
+              </div>
+
+              <!-- Year Badge -->
+              <div
+                class="absolute top-3 right-3 px-2 py-1 rounded text-xs font-bold"
+                :class="
+                  year.year === 'Foundation'
+                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300'
+                    : year.year === 'Year 5'
+                      ? 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300'
+                      : 'bg-gray-100 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300'
+                "
+              >
+                {{ year.year.slice(0, 1) }}{{ year.year.slice(-1) }}
+              </div>
+
               <h4
-                class="text-lg sm:text-xl font-bold mb-3 sm:mb-4"
+                class="text-lg sm:text-xl font-bold mb-3 sm:mb-4 pr-12 flex items-center gap-2"
                 :class="educationYearTitleClasses"
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-5 h-5 sm:w-6 sm:h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"
+                  />
+                </svg>
                 {{ year.year }}
               </h4>
               <ul class="space-y-1 sm:space-y-2">
@@ -1396,7 +1550,7 @@
                   class="text-sm sm:text-base"
                   :class="educationCourseClasses"
                 >
-                  {{ course }}
+                  • {{ course }}
                 </li>
               </ul>
             </div>
@@ -1528,7 +1682,7 @@
                   <div class="font-bold text-sm sm:text-base" :class="contactLabelClasses">
                     Phone
                   </div>
-                  <div class="text-sm sm:text-base" :class="contactValueClasses">069-367-***</div>
+                  <div class="text-sm sm:text-base" :class="contactValueClasses">069-376-706</div>
                 </div>
               </div>
 
@@ -1572,18 +1726,71 @@
               <h4 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4" :class="languagesTitleClasses">
                 Languages
               </h4>
-              <div class="flex flex-wrap gap-2 sm:gap-4">
+              <div class="space-y-3 max-w-md">
                 <div
                   v-for="lang in languages"
                   :key="lang.name"
-                  class="px-3 sm:px-4 py-2 rounded-lg transition-colors duration-300"
+                  class="flex items-center gap-3 p-3 rounded-xl transition-colors duration-300"
                   :class="languageCardClasses"
                 >
-                  <div class="font-bold text-sm sm:text-base" :class="languageNameClasses">
-                    {{ lang.name }}
+                  <!-- Flag -->
+                  <div
+                    class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border border-gray-200 dark:border-gray-700"
+                  >
+                    <img
+                      :src="getLanguageLogo(lang.name)"
+                      :alt="`${lang.name} flag`"
+                      class="w-full h-full object-cover"
+                    />
                   </div>
-                  <div class="text-xs sm:text-sm" :class="languageLevelClasses">
-                    {{ lang.level }}
+
+                  <!-- Content with progress -->
+                  <div class="flex-1 min-w-0">
+                    <div class="flex justify-between items-center mb-1">
+                      <div
+                        class="font-bold text-sm sm:text-base truncate"
+                        :class="languageNameClasses"
+                      >
+                        {{ lang.name }}
+                      </div>
+                      <div
+                        class="text-xs font-medium px-2 py-0.5 rounded-full"
+                        :class="[
+                          languageLevelClasses,
+                          lang.level === 'Native'
+                            ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+                            : lang.level === 'Fluent'
+                              ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300'
+                              : 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300',
+                        ]"
+                      >
+                        {{ lang.level }}
+                      </div>
+                    </div>
+
+                    <!-- Proficiency bar -->
+                    <div
+                      class="h-1.5 w-full bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden"
+                    >
+                      <div
+                        class="h-full rounded-full transition-all duration-500"
+                        :class="[
+                          lang.level === 'Native'
+                            ? 'bg-green-500 dark:bg-green-600'
+                            : lang.level === 'Fluent'
+                              ? 'bg-yellow-500 dark:bg-yellow-600'
+                              : 'bg-blue-500 dark:bg-blue-600',
+                        ]"
+                        :style="{
+                          width:
+                            lang.level === 'Native'
+                              ? '100%'
+                              : lang.level === 'Fluent'
+                                ? '75%'
+                                : '35%',
+                        }"
+                      ></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1609,16 +1816,26 @@
                   class="p-3 sm:p-4 rounded-lg transition-colors duration-300"
                   :class="technicalSkillCardClasses"
                 >
-                  <div
-                    class="font-bold text-sm sm:text-base mb-1 sm:mb-2"
-                    :class="skillNameClasses"
-                  >
-                    {{ skill.name }}
+                  <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                    <!-- Skill Logo -->
+                    <div class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0">
+                      <img
+                        :src="getTechLogo(skill.name)"
+                        :alt="skill.name"
+                        class="w-full h-full object-contain"
+                      />
+                    </div>
+
+                    <div class="flex-1 flex justify-between items-center">
+                      <div class="font-bold text-sm sm:text-base" :class="skillNameClasses">
+                        {{ skill.name }}
+                      </div>
+                    </div>
                   </div>
                   <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                     <div
-                      class="h-full rounded-full transition-colors duration-300"
-                      :class="skillBarClasses"
+                      class="h-full rounded-full transition-all duration-700"
+                      :class="getSkillColor(skill.name)"
                       :style="{ width: skill.level + '%' }"
                     ></div>
                   </div>
@@ -1658,11 +1875,28 @@
             &copy; 2025 Portfolio. All rights reserved.
           </div>
           <div class="flex space-x-3 sm:space-x-4">
+            <!-- LinkedIn -->
+            <a
+              href="https://www.linkedin.com/in/hai-kim-sreng-a0527b274/"
+              target="_blank"
+              class="p-2 sm:p-3 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg"
+              :class="footerSocialIconClasses"
+              aria-label="LinkedIn Profile"
+            >
+              <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                />
+              </svg>
+            </a>
+
+            <!-- GitHub -->
             <a
               href="https://github.com/Kimsreng28"
               target="_blank"
-              class="p-2 sm:p-3 rounded-full transition-all duration-300"
+              class="p-2 sm:p-3 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg"
               :class="footerSocialIconClasses"
+              aria-label="GitHub Profile"
             >
               <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
                 <path
@@ -1754,7 +1988,7 @@ export default {
         },
         {
           name: 'Node.js',
-          logo: 'https://nodejs.org/static/images/logo.svg',
+          logo: 'https://www.nicepng.com/png/full/93-932207_js-on-light-background-node-js-logo-png.png',
           category: 'Runtime',
         },
         {
@@ -1930,8 +2164,8 @@ export default {
       ],
       languages: [
         { name: 'Khmer', level: 'Native' },
-        { name: 'English', level: 'Intermediate' },
-        { name: 'French', level: 'Intermediate' },
+        { name: 'English', level: 'Fluent' },
+        { name: 'French', level: 'Basic' },
       ],
       technicalSkills: [
         { name: 'Laravel', level: 90 },
@@ -2403,6 +2637,78 @@ export default {
     },
   },
   methods: {
+    getTechLogo(techName) {
+      const techMap = {
+        Laravel:
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Laravel.svg/1200px-Laravel.svg.png',
+        'Next.js': 'https://logo.svgcdn.com/devicon/nextjs-original.png',
+        'Nest.js': 'https://nestjs.com/img/logo-small.svg',
+        Flutter: 'https://juststickers.in/wp-content/uploads/2019/01/flutter.png',
+        PostgreSQL:
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png',
+        'Vue.js': 'https://vuejs.org/images/logo.png',
+      }
+      return techMap[techName] || ''
+    },
+
+    getSkillColor(skillName) {
+      const colorMap = {
+        Laravel: 'bg-red-500 dark:bg-red-600',
+        'Next.js': 'bg-black dark:bg-gray-800',
+        'Nest.js': 'bg-pink-500 dark:bg-pink-600',
+        Flutter: 'bg-blue-500 dark:bg-blue-600',
+        PostgreSQL: 'bg-indigo-500 dark:bg-indigo-600',
+        'Vue.js': 'bg-green-500 dark:bg-green-600',
+      }
+      return colorMap[skillName] || 'bg-gray-500 dark:bg-gray-600'
+    },
+
+    getSkillTextColor(skillName) {
+      const colorMap = {
+        Laravel: 'text-red-600 dark:text-red-400',
+        'Next.js': 'text-black dark:text-gray-300',
+        'Nest.js': 'text-pink-600 dark:text-pink-400',
+        Flutter: 'text-blue-600 dark:text-blue-400',
+        PostgreSQL: 'text-indigo-600 dark:text-indigo-400',
+        'Vue.js': 'text-green-600 dark:text-green-400',
+      }
+      return colorMap[skillName] || 'text-gray-600 dark:text-gray-400'
+    },
+    getLanguageLogo(langName) {
+      const langMap = {
+        Khmer: 'https://flagcdn.com/kh.svg',
+        English: 'https://flagcdn.com/us.svg',
+        French: 'https://flagcdn.com/fr.svg',
+      }
+      return langMap[langName] || '' // ADD THIS RETURN STATEMENT
+    },
+    getTechLogo(techName) {
+      const techMap = {
+        Laravel:
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Laravel.svg/1200px-Laravel.svg.png',
+        'Next.js': 'https://logo.svgcdn.com/devicon/nextjs-original.png',
+        'Nest.js': 'https://nestjs.com/img/logo-small.svg',
+        Flutter: 'https://juststickers.in/wp-content/uploads/2019/01/flutter.png',
+        PostgreSQL:
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png',
+        'Vue.js': 'https://vuejs.org/images/logo.png',
+        React:
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1200px-React-icon.svg.png',
+        'Node.js':
+          'https://www.nicepng.com/png/full/93-932207_js-on-light-background-node-js-logo-png.png',
+        MySQL: 'https://www.mysql.com/common/logos/logo-mysql-170x115.png',
+        Redis:
+          'https://cdn.iconscout.com/icon/free/png-256/free-redis-icon-svg-download-png-1175103.png?f=webp',
+        Docker: 'https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png',
+        'Socket.IO': 'https://socket.io/images/logo.svg',
+        TypeScript:
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Typescript_logo_2020.svg/1200px-Typescript_logo_2020.svg.png',
+        Tailwind:
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Tailwind_CSS_Logo.svg/1200px-Tailwind_CSS_Logo.svg.png',
+      }
+
+      return techMap[techName] || ''
+    },
     toggleTheme() {
       this.darkMode = !this.darkMode
       if (this.darkMode) {
