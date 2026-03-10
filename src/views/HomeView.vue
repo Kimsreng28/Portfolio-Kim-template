@@ -2078,8 +2078,30 @@ export default {
       ],
       experiences: [
         {
+          title: 'Backend Developer – EasyEazy Application Project',
+          period: '2026 - Present',
+          description: 'Team/Real-World Project',
+          technologies: [
+            'Vendure',
+            'Nest.js',
+            'PostgreSQL',
+            'TypeScript',
+            'OAuth',
+            'FCM',
+            'Facebook',
+            'KHQR',
+          ],
+          details: [
+            'Built a full modern Easy Application using professional software architecture ',
+            'Designed and developed complete management platform with authentication, admin dashboards, and role-based permissions',
+            'Integrated Facebook Authentication, Google Authentication, and Native Authentication',
+            'Developed FCM for Notifications system for real-time alerts',
+            'Added multiple vendor with the own payment using KHQR pay ways, shipping, and delivery methods',
+          ],
+        },
+        {
           title: 'Full-Stack Developer – E-Management Platform Project',
-          period: '2025 - Present',
+          period: '2025 - 2026',
           description: 'Personal/Academic Project',
           technologies: [
             'Laravel',
@@ -2127,6 +2149,23 @@ export default {
       projects: [
         {
           id: 1,
+          name: 'Easy Eazy App',
+          year: '2026',
+          description:
+            'Complete app for sale the product buy multiple vendor, easy to buy for customer.',
+          technologies: [
+            'Vendure',
+            'Nest.js',
+            'PostgreSQL',
+            'TypeScript',
+            'OAuth',
+            'FCM',
+            'Facebook',
+            'KHQR',
+          ],
+        },
+        {
+          id: 2,
           name: 'E-Management System',
           year: '2025',
           description:
@@ -2134,21 +2173,21 @@ export default {
           technologies: ['Laravel', 'Next.js', 'PostgreSQL', 'Redis', 'Stripe'],
         },
         {
-          id: 2,
+          id: 3,
           name: 'Real-Time Quiz App',
           year: '2024',
           description: 'Web and mobile app with socket-based real-time communication.',
           technologies: ['Vue.js', 'Nest.js', 'Socket.IO', 'Flutter'],
         },
         {
-          id: 3,
+          id: 4,
           name: 'E-Commerce Platform',
           year: '2024',
           description: 'Full-featured e-commerce with multi-role access and microservices.',
           technologies: ['Next.js', 'Nest.js', 'MySQL', 'Go', 'OAuth'],
         },
         {
-          id: 4,
+          id: 5,
           name: 'Java Swing Game',
           year: '2023',
           description: 'Desktop adventure game with OOP design and game logic.',
