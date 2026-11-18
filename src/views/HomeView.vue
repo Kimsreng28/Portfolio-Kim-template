@@ -1,1885 +1,887 @@
 <template>
-  <div id="app" :class="modeClasses">
-    <!-- Navigation -->
-    <nav
-      class="fixed top-0 w-full z-50 py-4 sm:py-5 px-4 sm:px-6 shadow-xl border-b transition-all duration-300"
-      :class="navClasses"
-      :style="{ transform: navTransform }"
-    >
-      <div class="container mx-auto flex justify-between items-center">
-        <!-- Logo with icon - Improved for mobile & tablet -->
-        <div class="flex items-center space-x-2 sm:space-x-3">
-          <div
-            class="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center shadow-lg transition-colors duration-300 flex-shrink-0"
-            :class="logoClasses"
-          >
-            <svg
-              class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-              />
-            </svg>
-          </div>
-          <div class="text-lg sm:text-xl md:text-2xl font-bold flex items-center gap-1 sm:gap-2">
-            <span :class="logoTextClasses" class="leading-tight">HAI</span>
-            <span :class="textColor" class="leading-tight">KIMSRENG</span>
-          </div>
-        </div>
+  <div
+    class="min-h-screen overflow-x-hidden bg-white text-gray-900 dark:bg-gray-950 dark:text-white transition-colors duration-300"
+  >
+    <!-- Scroll Progress -->
+    <div class="fixed top-0 left-0 right-0 h-[3px] z-[70] pointer-events-none">
+      <div
+        class="h-full origin-left bg-gradient-to-r from-blue-500 via-blue-400 to-cyan-300"
+        :style="{ transform: `scaleX(${scrollProgress})` }"
+      ></div>
+    </div>
 
-        <!-- Desktop Navigation with Icons - Tablet optimized -->
-        <div
-          class="hidden md:flex items-center space-x-0 lg:space-x-1 backdrop-blur-sm px-2 lg:px-3 py-1.5 lg:py-2 rounded-full border transition-all duration-300"
-          :class="navContainerClasses"
-        >
+    <!-- Navigation -->
+    <header
+      class="fixed inset-x-0 top-0 z-[60] transition-all duration-300"
+      :class="
+        isScrolled
+          ? 'bg-white/90 dark:bg-gray-950/90 backdrop-blur-lg shadow-lg border-b border-gray-200 dark:border-gray-800'
+          : 'bg-transparent border-b border-transparent'
+      "
+    >
+      <div class="container mx-auto px-5 sm:px-7 h-[76px] flex items-center justify-between">
+        <a href="#home" @click.prevent="scrollTo('home')" class="flex items-center gap-3">
+          <img
+            src="../assets/images/logo_darkBlue.png"
+            alt="DRDC"
+            class="h-8 sm:h-10 w-auto dark:hidden"
+          />
+          <img
+            src="../assets/images/logo_white.png"
+            alt="DRDC"
+            class="hidden h-8 sm:h-10 w-auto dark:block"
+          />
+          <span class="hidden sm:block leading-tight">
+            <b class="block font-bold tracking-wide">HAI KIMSRENG</b>
+            <span
+              class="block text-[10.5px] uppercase tracking-[0.16em] text-gray-500 dark:text-gray-400"
+              >Full Stack Developer</span
+            >
+          </span>
+        </a>
+
+        <nav class="hidden xl:flex items-center gap-7">
           <a
             v-for="item in navItems"
             :key="item.id"
             :href="'#' + item.id"
             @click.prevent="scrollTo(item.id)"
-            class="nav-link group relative px-2 lg:px-4 py-1.5 lg:py-2 rounded-full transition-all duration-300 flex items-center space-x-1 lg:space-x-2"
-            :class="navLinkClasses"
+            class="relative text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300 nav-link"
           >
-            <!-- Icon - Always visible on tablet/desktop -->
-            <span :class="navIconClasses">
-              <svg
-                class="w-3.5 h-3.5 lg:w-4 lg:h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  v-if="item.icon"
-                  :d="item.icon"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                />
-              </svg>
-            </span>
-            <!-- Text - Hide on tablet, show on desktop -->
-            <span :class="navTextClasses" class="hidden lg:inline">
-              {{ item.name }}
-            </span>
-            <!-- Active indicator -->
-            <span
-              class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 group-hover:w-6 lg:group-hover:w-8 h-0.5 rounded-full transition-all duration-300"
-              :class="navIndicatorClasses"
-            ></span>
+            {{ item.name }}
           </a>
-        </div>
+        </nav>
 
-        <!-- Right side - Theme Toggle & Mobile Menu -->
-        <div class="flex items-center space-x-3 sm:space-x-4">
-          <!-- Theme Toggle Button -->
+        <div class="flex items-center gap-3">
+          <!-- Theme Toggle -->
           <button
             @click="toggleTheme"
-            class="relative w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg border flex-shrink-0"
-            :class="themeToggleClasses"
+            class="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center border shadow-lg bg-white/80 border-gray-300 hover:bg-gray-200 dark:bg-gray-800/80 dark:border-gray-700 dark:hover:bg-gray-700 transition-all duration-300"
             aria-label="Toggle theme"
           >
-            <div class="relative w-5 h-5 sm:w-5 sm:h-5 md:w-6 md:h-6">
-              <!-- Sun Icon -->
-              <svg
-                v-if="darkMode"
-                class="w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5 absolute inset-0 m-auto text-yellow-300 transition-all duration-300 opacity-100"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <!-- Moon Icon -->
-              <svg
-                v-else
-                class="w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5 absolute inset-0 m-auto text-gray-700 transition-all duration-300 opacity-100"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-              </svg>
-            </div>
+            <svg
+              v-if="darkMode"
+              class="w-5 h-5 text-yellow-300"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <svg v-else class="w-5 h-5 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+            </svg>
           </button>
 
-          <!-- Mobile Menu Button - Hide on tablet/desktop -->
-          <div class="md:hidden">
-            <button
-              @click="mobileMenuOpen = !mobileMenuOpen"
-              class="relative w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg border flex-shrink-0"
-              :class="mobileMenuButtonClasses"
-              aria-label="Toggle menu"
-            >
-              <div class="relative w-5 h-5 sm:w-5 sm:h-5">
-                <span
-                  :class="[
-                    'absolute top-1 left-0 w-5 sm:w-5 h-0.5 rounded-full transition-all duration-300',
-                    mobileMenuLineClasses,
-                    { 'top-2 rotate-45': mobileMenuOpen, 'top-1': !mobileMenuOpen },
-                  ]"
-                ></span>
-                <span
-                  :class="[
-                    'absolute top-2 left-0 w-5 sm:w-5 h-0.5 rounded-full transition-all duration-300',
-                    mobileMenuLineClasses,
-                    { 'opacity-0': mobileMenuOpen },
-                  ]"
-                ></span>
-                <span
-                  :class="[
-                    'absolute bottom-1 left-0 w-5 sm:w-5 h-0.5 rounded-full transition-all duration-300',
-                    mobileMenuLineClasses,
-                    {
-                      'bottom-2 -rotate-45': mobileMenuOpen,
-                      'bottom-1': !mobileMenuOpen,
-                    },
-                  ]"
-                ></span>
-              </div>
-            </button>
-          </div>
+          <a
+            href="#contact"
+            @click.prevent="scrollTo('contact')"
+            class="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+          >
+            Let's Connect
+          </a>
+
+          <!-- Mobile Menu Button -->
+          <button
+            @click="mobileMenuOpen = !mobileMenuOpen"
+            class="xl:hidden w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex flex-col items-center justify-center gap-1.5 border shadow-lg bg-white border-gray-300 dark:bg-gray-800 dark:border-gray-700"
+            aria-label="Toggle menu"
+          >
+            <span
+              class="w-5 h-0.5 rounded-full bg-blue-500 transition-all duration-300"
+              :class="mobileMenuOpen ? 'translate-y-2 rotate-45' : ''"
+            ></span>
+            <span
+              class="w-5 h-0.5 rounded-full bg-blue-500 transition-all duration-300"
+              :class="mobileMenuOpen ? 'opacity-0' : ''"
+            ></span>
+            <span
+              class="w-5 h-0.5 rounded-full bg-blue-500 transition-all duration-300"
+              :class="mobileMenuOpen ? '-translate-y-2 -rotate-45' : ''"
+            ></span>
+          </button>
         </div>
       </div>
 
-      <!-- Mobile Menu with Icons - Tablet optimized -->
+      <!-- Mobile Menu -->
       <div
         v-if="mobileMenuOpen"
-        class="md:hidden backdrop-blur-lg mt-4 py-4 px-4 sm:px-6 rounded-2xl shadow-2xl border mx-3 sm:mx-4 transition-all duration-300"
-        :class="mobileMenuClasses"
+        class="xl:hidden mx-4 mt-2 p-4 rounded-2xl border shadow-2xl bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-800"
       >
-        <div class="flex flex-col space-y-2">
-          <a
-            v-for="(item, index) in navItems"
-            :key="item.id"
-            :href="'#' + item.id"
-            @click.prevent="scrollToAndCloseMenu(item.id)"
-            class="mobile-nav-link group relative px-4 sm:px-5 py-3 rounded-xl transition-all duration-300 flex items-center space-x-3"
-            :class="mobileNavLinkClasses"
-            :style="{ '--i': index }"
+        <a
+          v-for="item in navItems"
+          :key="item.id"
+          :href="'#' + item.id"
+          @click.prevent="scrollTo(item.id)"
+          class="block px-3 py-3 rounded-lg font-medium hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-gray-800 dark:hover:text-blue-400"
+        >
+          {{ item.name }}
+        </a>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section id="home" class="relative min-h-screen flex items-center pt-28 pb-24 overflow-hidden">
+      <div class="absolute inset-0 pointer-events-none">
+        <div
+          class="absolute top-1/4 left-1/4 w-72 h-72 rounded-full blur-3xl opacity-20 bg-blue-500 animate-pulse"
+        ></div>
+        <div
+          class="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-3xl opacity-10 bg-blue-700 animate-pulse"
+        ></div>
+      </div>
+
+      <div
+        class="container mx-auto px-5 sm:px-7 relative z-10 grid lg:grid-cols-2 gap-14 items-center"
+      >
+        <div>
+          <p
+            class="rise inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-[0.18em] bg-blue-100 text-blue-700 dark:bg-blue-600/20 dark:text-blue-400"
+            style="animation-delay: 0.2s"
           >
-            <!-- Icon container -->
-            <div
-              class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-all duration-300 flex-shrink-0"
-              :class="mobileNavIconContainerClasses"
+            ❖ Full Stack Developer • DRDC
+          </p>
+
+          <h1
+            class="rise mt-6 text-[clamp(38px,5.6vw,68px)] font-bold leading-[1.08] tracking-tight"
+            style="animation-delay: 0.3s"
+          >
+            I lead teams that build
+            <span class="relative inline-block text-blue-600 dark:text-blue-400"
+              >drone &amp; automation</span
             >
-              <span :class="mobileNavIconClasses">
-                <svg
-                  class="w-4 h-4 sm:w-5 sm:h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    v-if="item.icon"
-                    :d="item.icon"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                  />
-                </svg>
-              </span>
-            </div>
-            <!-- Text -->
-            <div class="flex-1 min-w-0">
-              <span class="text-sm sm:text-base font-medium truncate" :class="mobileNavTextClasses">
-                {{ item.name }}
-              </span>
-            </div>
-            <!-- Arrow indicator -->
-            <span :class="mobileNavArrowClasses" class="flex-shrink-0">
+            systems that work.
+          </h1>
+
+          <p
+            class="rise mt-6 max-w-xl text-lg text-gray-600 dark:text-gray-300"
+            style="animation-delay: 0.5s"
+          >
+            Team Lead at DRDC. I lead the team on GCS Drone Delivery, DRDT and DRDC projects, and
+            manage the servers they run on.
+          </p>
+
+          <div class="rise mt-8 flex flex-wrap gap-4" style="animation-delay: 0.65s">
+            <a
+              href="#projects"
+              @click.prevent="scrollTo('projects')"
+              class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+            >
+              View My Projects
               <svg
-                class="w-4 h-4 sm:w-5 sm:h-5"
+                class="w-4 h-4"
                 fill="none"
                 stroke="currentColor"
+                stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </span>
-          </a>
-        </div>
-
-        <!-- Mobile Menu Footer -->
-        <div class="mt-6 pt-4 border-t" :class="mobileMenuFooterClasses">
-          <div class="flex items-center justify-center space-x-4">
-            <a
-              href="https://github.com/Kimsreng28"
-              target="_blank"
-              class="p-2 rounded-lg transition-all duration-300"
-              :class="socialIconClasses"
-              aria-label="GitHub"
-            >
-              <svg
-                class="w-5 h-5 transition-colors duration-300"
-                :class="socialIconSvgClasses"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
-                />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6l6 6-6 6" />
               </svg>
             </a>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section id="home" class="min-h-screen flex items-center pt-16 relative overflow-hidden">
-      <!-- Background Effects -->
-      <div class="absolute inset-0 z-0">
-        <div
-          class="absolute top-1/4 left-1/4 w-64 h-64 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"
-          :class="heroBgCircle1"
-        ></div>
-        <div
-          class="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse delay-1000"
-          :class="heroBgCircle2"
-        ></div>
-        <div
-          class="absolute top-3/4 left-1/2 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-15 animate-pulse delay-500"
-          :class="heroBgCircle3"
-        ></div>
-      </div>
-
-      <div class="container mx-auto px-4 sm:px-6 py-12 md:py-20 relative z-10">
-        <div class="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
-          <!-- Left Content -->
-          <div ref="leftContent" class="lg:w-1/2 w-full">
-            <div class="mb-6 md:mb-8">
-              <div
-                class="inline-block px-4 py-2 rounded-full mb-4 md:mb-6 transition-colors duration-300"
-                :class="heroBadgeClasses"
-              >
-                <span :class="heroBadgeTextClasses">🚀 FULL-STACK DEVELOPER</span>
-              </div>
-              <h1
-                class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 leading-tight"
-              >
-                <span class="inline-flex items-center relative">
-                  <span class="mr-1.5 sm:mr-2 md:mr-2.5 lg:mr-3" :class="heroTitleClasses">❖</span>
-                  <span :class="heroTitleClasses">HAI KIMSRENG</span>
-
-                  <!-- Star Icon - Responsive Top Right -->
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="absolute w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 text-yellow-500 animate-pulse"
-                    :class="[
-                      'top-0 -right-4',
-                      'sm:-top-1 sm:-right-5',
-                      'md:-top-2 md:-right-6',
-                      'lg:-top-3 lg:-right-8',
-                      'xl:-top-4 xl:-right-10',
-                    ]"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"
-                    />
-                  </svg>
-                </span>
-              </h1>
-              <h2 class="text-xl sm:text-2xl md:text-3xl mb-4 md:mb-6" :class="heroSubtitleClasses">
-                <span :class="heroSubtitleSpan1">Software Engineer</span> &
-                <span :class="heroSubtitleSpan2">Mobile Developer</span>
-              </h2>
-              <p
-                class="text-base sm:text-lg md:text-lg mb-6 md:mb-8 max-w-2xl"
-                :class="heroTextClasses"
-              >
-                Crafting digital experiences with cutting-edge technologies. Specialized in building
-                scalable web applications, real-time systems, and cross-platform mobile solutions
-                that solve real-world problems.
-              </p>
-            </div>
-
-            <!-- Quick Stats -->
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
-              <div
-                v-for="stat in quickStats"
-                :key="stat.label"
-                class="backdrop-blur-sm p-3 sm:p-4 rounded-xl border transition-colors duration-300"
-                :class="quickStatsClasses"
-              >
-                <div :class="quickStatsNumberClasses">{{ stat.number }}</div>
-                <div class="text-xs sm:text-sm" :class="quickStatsLabelClasses">
-                  {{ stat.label }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Tech Stack -->
-            <div class="mb-6 md:mb-8">
-              <h3
-                class="text-base sm:text-lg font-semibold mb-3 md:mb-4"
-                :class="techStackTitleClasses"
-              >
-                Tech Stack
-              </h3>
-              <div class="flex flex-wrap gap-2 md:gap-3">
-                <div
-                  v-for="tech in mainTech"
-                  :key="tech"
-                  class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border transition-all duration-300 group cursor-pointer flex items-center gap-2"
-                  :class="techStackItemClasses"
-                >
-                  <!-- Tech Stack Logo -->
-                  <img
-                    :src="getTechLogo(tech)"
-                    :alt="tech"
-                    class="w-4 h-4 sm:w-5 sm:h-5 object-contain"
-                  />
-
-                  <span :class="techStackTextClasses">
-                    {{ tech }}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <!-- CTA Buttons -->
-            <div class="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 w-full">
-              <!-- Primary Button - Get In Touch -->
-              <button
-                @click="scrollTo('contact')"
-                class="px-4 sm:px-6 py-3.5 sm:py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-xl w-full sm:w-auto sm:flex-1 min-h-[50px] sm:min-h-0"
-                :class="ctaButtonPrimaryClasses"
-              >
-                <svg
-                  class="w-5 h-5 sm:w-4 sm:h-4 mr-2.5 sm:mr-2 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-                <span class="text-sm sm:text-base whitespace-nowrap">Get In Touch</span>
-              </button>
-
-              <!-- Secondary Button - View GitHub -->
-              <a
-                href="https://github.com/Kimsreng28"
-                target="_blank"
-                class="px-4 sm:px-6 py-3.5 sm:py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center border w-full sm:w-auto sm:flex-1 min-h-[50px] sm:min-h-0"
-                :class="ctaButtonSecondaryClasses"
-              >
-                <svg
-                  class="w-5 h-5 sm:w-4 sm:h-4 mr-2.5 sm:mr-2 flex-shrink-0"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
-                  />
-                </svg>
-                <span class="text-sm sm:text-base whitespace-nowrap">View GitHub</span>
-              </a>
-
-              <!-- Tertiary Button - View Projects -->
-              <button
-                @click="scrollTo('projects')"
-                class="px-4 sm:px-6 py-3.5 sm:py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center border w-full sm:w-auto sm:flex-1 min-h-[50px] sm:min-h-0"
-                :class="ctaButtonTertiaryClasses"
-              >
-                <svg
-                  class="w-5 h-5 sm:w-4 sm:h-4 mr-2.5 sm:mr-2 flex-shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                  />
-                </svg>
-                <span class="text-sm sm:text-base whitespace-nowrap">View Projects</span>
-              </button>
-            </div>
+            <a
+              href="#contact"
+              @click.prevent="scrollTo('contact')"
+              class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border font-semibold bg-white border-gray-300 text-gray-800 hover:border-blue-500 hover:text-blue-600 dark:bg-gray-800/60 dark:border-gray-700 dark:text-gray-200 dark:hover:border-blue-500 dark:hover:text-blue-400 hover:-translate-y-0.5 transition-all duration-300"
+            >
+              Contact Me
+            </a>
           </div>
 
-          <!-- Right Content - Profile Image & Info -->
-          <div ref="rightContent" class="lg:w-1/2 flex justify-center mt-8 lg:mt-0">
-            <div class="relative w-full max-w-sm lg:max-w-md">
-              <!-- Main Profile Card -->
-              <div class="relative z-20">
-                <!-- Profile Image Container -->
-                <div
-                  class="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 mx-auto"
-                >
-                  <!-- Stars - Responsive positioning -->
-                  <div class="absolute inset-0 z-15">
-                    <!-- Star 1 - Top Right -->
-                    <div
-                      class="absolute star-decoration"
-                      :class="{
-                        'top-10 -right-2 sm:top-10 sm:right-2 md:top-12 md:right-0 lg:top-10 lg:right-2': true,
-                      }"
-                      style="animation-delay: 0s"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7"
-                        :class="darkMode ? 'text-blue-400' : 'text-blue-500'"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"
-                        />
-                      </svg>
-                    </div>
-
-                    <!-- Star 2 - Top Left -->
-                    <div
-                      class="absolute star-decoration"
-                      :class="{
-                        'top-2 left-4 sm:top-3 sm:left-10 md:top-4 md:left-8 lg:top-2 lg:left-12': true,
-                      }"
-                      style="animation-delay: 0.8s"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7"
-                        :class="darkMode ? 'text-blue-400' : 'text-blue-500'"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"
-                        />
-                      </svg>
-                    </div>
-
-                    <!-- Star 3 - Bottom Left -->
-                    <div
-                      class="absolute star-decoration"
-                      :class="{
-                        'bottom-8 -left-2 sm:bottom-10 sm:left-3 md:bottom-8 md:left-2 lg:bottom-10 lg:left-2': true,
-                      }"
-                      style="animation-delay: 1.6s"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7"
-                        :class="darkMode ? 'text-blue-400' : 'text-blue-500'"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"
-                        />
-                      </svg>
-                    </div>
-
-                    <!-- Star 4 - Bottom Right -->
-                    <div
-                      class="absolute star-decoration"
-                      :class="{
-                        'bottom-4 -right-0 sm:bottom-3 sm:right-10 md:bottom-2 md:right-10 lg:bottom-3 lg:right-10': true,
-                      }"
-                      style="animation-delay: 2.4s"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7"
-                        :class="darkMode ? 'text-blue-400' : 'text-blue-500'"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-
-                  <!-- Khmer Cultural Flower Border - Responsive positioning -->
-                  <div class="absolute inset-0 z-20">
-                    <!-- Top Left Flower -->
-                    <div
-                      class="absolute khmer-flower"
-                      :class="{
-                        '-top-4 -left-6 sm:-top-5 sm:-left-5 md:-top-6 md:-left-6 lg:-top-7 lg:-left-7': true,
-                      }"
-                      style="--rotation: -12deg"
-                    >
-                      <img
-                        src="../assets/images/flower.png"
-                        alt="Khmer Flower"
-                        class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 object-contain filter brightness-75 drop-shadow-lg"
-                      />
-                    </div>
-
-                    <!-- Top Right Flower -->
-                    <div
-                      class="absolute khmer-flower"
-                      :class="{
-                        '-top-0 -right-2 sm:-top-5 sm:-right-5 md:-top-4 md:-right-4 lg:-top-7 lg:-right-7': true,
-                      }"
-                      style="--rotation: 12deg; animation-delay: 0.5s"
-                    >
-                      <img
-                        src="../assets/images/flower.png"
-                        alt="Khmer Flower"
-                        class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 object-contain filter brightness-75 drop-shadow-lg"
-                      />
-                    </div>
-
-                    <!-- Bottom Left Flower -->
-                    <div
-                      class="absolute khmer-flower"
-                      :class="{
-                        '-bottom-2 -left-4 sm:-bottom-5 sm:-left-5 md:-bottom-4 md:-left-10 lg:-bottom-5 lg:-left-7': true,
-                      }"
-                      style="--rotation: 12deg; animation-delay: 1s"
-                    >
-                      <img
-                        src="../assets/images/flower.png"
-                        alt="Khmer Flower"
-                        class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 object-contain filter brightness-75 drop-shadow-lg"
-                      />
-                    </div>
-
-                    <!-- Bottom Right Flower -->
-                    <div
-                      class="absolute khmer-flower"
-                      :class="{
-                        '-bottom-6 -right-4 sm:-bottom-5 sm:-right-5 md:-bottom-6 md:-right-6 lg:-bottom-7 lg:-right-7': true,
-                      }"
-                      style="--rotation: -12deg; animation-delay: 1.5s"
-                    >
-                      <img
-                        src="../assets/images/flower.png"
-                        alt="Khmer Flower"
-                        class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 object-contain filter brightness-75 drop-shadow-lg"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Traditional Pattern Border with Animation -->
-                  <div
-                    class="absolute inset-0 rounded-full border-2 sm:border-3 md:border-4 z-10 khmer-border"
-                    :class="darkMode ? 'border-gray-600/20' : 'border-gray-400/20'"
-                    style="
-                      background-image: repeating-conic-gradient(
-                        from 0deg,
-                        transparent 0deg 10deg,
-                        rgba(100, 100, 100, 0.05) 10deg 20deg
-                      );
-                    "
-                  ></div>
-
-                  <!-- Outer Glow Ring -->
-                  <div
-                    class="absolute inset-0 rounded-full animate-spin-slow z-0"
-                    :class="profileRingClasses"
-                    style="animation-duration: 8s"
-                  ></div>
-
-                  <!-- Profile Image Background with Subtle Pattern -->
-                  <div
-                    class="absolute inset-2 sm:inset-3 md:inset-4 rounded-full flex items-center justify-center overflow-hidden z-10"
-                    :class="profileBgClasses"
-                  >
-                    <!-- Decorative pattern overlay -->
-                    <div class="absolute inset-0 opacity-5">
-                      <div
-                        class="absolute top-0 left-0 w-full h-full"
-                        style="
-                          background-image:
-                            radial-gradient(
-                              circle at 25% 25%,
-                              rgba(150, 150, 150, 0.1) 0%,
-                              transparent 50%
-                            ),
-                            radial-gradient(
-                              circle at 75% 75%,
-                              rgba(150, 150, 150, 0.1) 0%,
-                              transparent 50%
-                            );
-                        "
-                      ></div>
-                    </div>
-
-                    <!-- Profile Image Placeholder -->
-                    <div
-                      class="relative w-full h-full rounded-full overflow-hidden border sm:border-2"
-                      :class="darkMode ? 'border-gray-700/20' : 'border-gray-600/20'"
-                    >
-                      <!-- Fallback Initials with decoration -->
-                      <div
-                        v-if="!profileImageLoaded"
-                        class="w-full h-full flex items-center justify-center relative"
-                        :class="profileFallbackClasses"
-                      >
-                        <!-- Decorative corner elements with animation -->
-                        <div
-                          class="absolute top-1 left-1 sm:top-2 sm:left-2 md:top-3 md:left-3 border-t border-l corner-decoration"
-                          :class="[
-                            darkMode ? 'border-gray-500' : 'border-gray-600',
-                            'w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6',
-                          ]"
-                        ></div>
-                        <div
-                          class="absolute top-1 right-1 sm:top-2 sm:right-2 md:top-3 md:right-3 border-t border-r corner-decoration"
-                          :class="[
-                            darkMode ? 'border-gray-500' : 'border-gray-600',
-                            'w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6',
-                          ]"
-                          style="animation-delay: 0.2s"
-                        ></div>
-                        <div
-                          class="absolute bottom-1 left-1 sm:bottom-2 sm:left-2 md:bottom-3 md:left-3 border-b border-l corner-decoration"
-                          :class="[
-                            darkMode ? 'border-gray-500' : 'border-gray-600',
-                            'w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6',
-                          ]"
-                          style="animation-delay: 0.4s"
-                        ></div>
-                        <div
-                          class="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 md:bottom-3 md:right-3 border-b border-r corner-decoration"
-                          :class="[
-                            darkMode ? 'border-gray-500' : 'border-gray-600',
-                            'w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6',
-                          ]"
-                          style="animation-delay: 0.6s"
-                        ></div>
-
-                        <div class="text-center relative z-10 px-2">
-                          <div
-                            class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold leading-none"
-                            :class="profileInitialsClasses"
-                          >
-                            HK
-                          </div>
-                          <div
-                            class="mt-1 sm:mt-2 md:mt-3 lg:mt-4 text-sm sm:text-base md:text-lg lg:text-xl"
-                            :class="profileTitleClasses"
-                          >
-                            Developer
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Actual Profile Image with overlay -->
-                      <div v-else class="relative w-full h-full">
-                        <img
-                          src="../assets/images/Kimsreng.jpg"
-                          alt="Profile Kim"
-                          class="w-full h-full object-cover"
-                        />
-                        <!-- Subtle pattern overlay on image -->
-                        <div
-                          class="absolute inset-0 mix-blend-overlay opacity-3"
-                          style="
-                            background-image: repeating-linear-gradient(
-                              45deg,
-                              transparent,
-                              transparent 10px,
-                              rgba(150, 150, 150, 0.1) 10px,
-                              rgba(150, 150, 150, 0.1) 20px
-                            );
-                          "
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Floating Tech Badges - Responsive positioning -->
-                  <div
-                    class="absolute badge-float"
-                    :class="[
-                      'rounded-lg shadow-lg transform rotate-6 z-30 border bg-white',
-                      'px-2 py-1 -top-6 -right-6',
-                      'sm:px-2 sm:py-1 sm:-top-7 sm:-right-7',
-                      'md:px-2 md:py-1 md:-top-8 md:-right-8',
-                      'lg:px-2 lg:py-1 lg:-top-9 lg:-right-9',
-                      floatingBadgeClasses,
-                      darkMode ? 'border-gray-600' : 'border-gray-500',
-                    ]"
-                    style="animation-delay: 0s"
-                  >
-                    <div class="flex items-center justify-center">
-                      <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Laravel.svg/1200px-Laravel.svg.png"
-                        alt="Laravel"
-                        class="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 lg:w-6 lg:h-6 object-contain"
-                      />
-                    </div>
-                  </div>
-
-                  <div
-                    class="absolute badge-float"
-                    :class="[
-                      'rounded-lg shadow-lg transform -rotate-6 z-30 border bg-white',
-                      'px-2 py-1 -bottom-6 -left-6',
-                      'sm:px-2 sm:py-1 sm:-bottom-7 sm:-left-7',
-                      'md:px-2 md:py-1 md:-bottom-8 md:-left-8',
-                      'lg:px-2 lg:py-1 lg:-bottom-6 lg:-left-7',
-                      floatingBadgeClasses,
-                      darkMode ? 'border-gray-600' : 'border-gray-500',
-                    ]"
-                    style="animation-delay: 0.3s"
-                  >
-                    <div class="flex items-center justify-center">
-                      <img
-                        src="https://juststickers.in/wp-content/uploads/2019/01/flutter.png"
-                        alt="Flutter"
-                        class="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 lg:w-6 lg:h-6 object-contain"
-                      />
-                    </div>
-                  </div>
-
-                  <div
-                    class="absolute badge-float"
-                    :class="[
-                      'rounded-lg shadow-lg z-30 border bg-white',
-                      'px-2 py-1 top-1/2 -right-8',
-                      'sm:px-2 sm:py-1.5 sm:top-1/2 sm:-right-9',
-                      'md:px-2 md:py-1.5 md:top-1/2 md:-right-10',
-                      'lg:px-2 lg:py-1.5 lg:top-1/2 lg:-right-12',
-                      floatingBadgeClasses,
-                      darkMode ? 'border-gray-600' : 'border-gray-500',
-                    ]"
-                    style="animation-delay: 0.6s"
-                  >
-                    <div class="flex items-center justify-center">
-                      <img
-                        src="https://logo.svgcdn.com/devicon/nextjs-original.png"
-                        alt="Next.js"
-                        class="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 lg:w-6 lg:h-6 object-contain"
-                      />
-                    </div>
-                  </div>
-
-                  <div
-                    class="absolute badge-float"
-                    :class="[
-                      'rounded-lg shadow-lg z-30 border bg-white',
-                      'px-2 py-1 top-1/2 -left-8',
-                      'sm:px-2 sm:py-1.5 sm:top-1/2 sm:-left-9',
-                      'md:px-2 md:py-1.5 md:top-1/2 md:-left-10',
-                      'lg:px-2 lg:py-1.5 lg:top-1/2 lg:-left-12',
-                      floatingBadgeClasses,
-                      darkMode ? 'border-gray-600' : 'border-gray-500',
-                    ]"
-                    style="animation-delay: 0.9s"
-                  >
-                    <div class="flex items-center justify-center">
-                      <img
-                        src="https://vuejs.org/images/logo.png"
-                        alt="Vue.js"
-                        class="w-4 h-4 sm:w-5 sm:h-5 md:w-5 md:h-5 lg:w-6 lg:h-6 object-contain"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Additional decorative elements with animation -->
-                  <div
-                    class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 sm:-translate-y-3 md:-translate-y-4 z-20"
-                  >
-                    <div
-                      class="w-6 h-0.5 sm:w-7 sm:h-0.5 md:w-8 md:h-1 rounded-full pulse-element"
-                      :class="darkMode ? 'bg-gray-500' : 'bg-gray-400'"
-                    ></div>
-                  </div>
-                  <div
-                    class="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-2 sm:translate-y-3 md:translate-y-4 z-20"
-                  >
-                    <div
-                      class="w-6 h-0.5 sm:w-7 sm:h-0.5 md:w-8 md:h-1 rounded-full pulse-element"
-                      :class="darkMode ? 'bg-gray-500' : 'bg-gray-400'"
-                      style="animation-delay: 0.5s"
-                    ></div>
-                  </div>
-                </div>
-
-                <!-- Info Card Below Image -->
-                <div
-                  class="mt-8 sm:mt-8 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border shadow-2xl max-w-sm sm:max-w-md mx-auto relative overflow-hidden"
-                  :class="infoCardClasses"
-                >
-                  <!-- Flower Banner Background -->
-                  <div class="absolute inset-0 z-0 overflow-hidden opacity-30">
-                    <img
-                      src="../assets/images/kh_flower.png"
-                      alt="Khmer Flower Banner"
-                      class="w-full h-full object-cover"
-                      :style="{
-                        transform: 'scale(1.1)',
-                        filter: darkMode
-                          ? 'brightness(0.4) contrast(1.2)'
-                          : 'brightness(0.9) contrast(1.1)',
-                      }"
-                    />
-                    <!-- Gradient overlay for better text readability -->
-                    <div
-                      class="absolute inset-0"
-                      :class="
-                        darkMode
-                          ? 'bg-gradient-to-br from-gray-900/80 via-gray-900/60 to-gray-900/80'
-                          : 'bg-gradient-to-br from-white/80 via-white/60 to-white/80'
-                      "
-                    ></div>
-
-                    <!-- Decorative border overlay -->
-                    <div
-                      class="absolute inset-0 border-2 rounded-2xl"
-                      :class="darkMode ? 'border-blue-500/20' : 'border-blue-400/20'"
-                    ></div>
-                  </div>
-
-                  <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-3 sm:mb-4">
-                      <div>
-                        <h3 class="text-lg sm:text-xl font-bold" :class="infoCardTitleClasses">
-                          ❖ HAI KIMSRENG
-                        </h3>
-                        <p :class="infoCardSubtitleClasses">Software Engineer</p>
-                      </div>
-                      <div
-                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors duration-300 relative"
-                        :class="infoCardIconClasses"
-                      >
-                        <!-- Decorative flower pattern on icon -->
-                        <svg
-                          class="w-5 h-5 sm:w-6 sm:h-6 text-white relative z-10"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-
-                    <div class="space-y-2 sm:space-y-3">
-                      <div class="flex items-center" :class="infoCardTextClasses">
-                        <svg
-                          class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                          />
-                        </svg>
-                        <span>Full-Stack & Mobile Developer</span>
-                      </div>
-                      <div class="flex items-center" :class="infoCardTextClasses">
-                        <svg
-                          class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                          />
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                        </svg>
-                        <span>Phnom Penh, Cambodia</span>
-                      </div>
-                      <div class="flex items-center" :class="infoCardTextClasses">
-                        <svg
-                          class="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3 flex-shrink-0"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        <span>Available for opportunities</span>
-                      </div>
-                    </div>
-
-                    <div class="mt-4 sm:mt-6 pt-3 sm:pt-6 border-t" :class="infoCardBorderClasses">
-                      <div class="flex justify-center space-x-3 sm:space-x-4">
-                        <button
-                          @click="scrollTo('contact')"
-                          :class="infoCardLinkClasses"
-                          class="flex items-center gap-1.5 sm:gap-2"
-                        >
-                          <!-- Contact Me Icon -->
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-4 w-4 sm:h-5 sm:w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
-                            />
-                          </svg>
-
-                          Contact Me
-                        </button>
-                        <span :class="infoCardDividerClasses">•</span>
-                        <button
-                          @click="scrollTo('projects')"
-                          :class="infoCardLinkClasses"
-                          class="flex items-center gap-1.5 sm:gap-2"
-                        >
-                          <!-- View Work Icon -->
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-4 w-4 sm:h-5 sm:w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
-                              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                            />
-                          </svg>
-                          View Work
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Background Decorative Elements -->
-              <div
-                class="absolute -top-4 sm:-top-8 -right-4 sm:-right-8 w-20 h-20 sm:w-40 sm:h-40 rounded-full blur-3xl opacity-20 z-0"
-                :class="profileDeco1"
-              ></div>
-              <div
-                class="absolute -bottom-4 sm:-bottom-8 -left-4 sm:-left-8 w-24 h-24 sm:w-60 sm:h-60 rounded-full blur-3xl opacity-15 z-0"
-                :class="profileDeco2"
-              ></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Scroll Indicator -->
-      <div
-        ref="scrollIndicator"
-        class="absolute left-1/2 transform -translate-x-1/2"
-        style="bottom: 0"
-      >
-        <!-- Spacer above the button -->
-        <div class="h-8 sm:h-12 w-full"></div>
-
-        <button
-          @click="scrollTo('about')"
-          class="flex flex-col items-center transition-all duration-300 hover:translate-y-1"
-          :class="scrollIndicatorClasses"
-        >
-          <span class="text-xs sm:text-sm mb-1.5 sm:mb-2 font-medium">Explore More</span>
-          <svg
-            class="w-5 h-5 sm:w-6 sm:h-6 animate-bounce"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          <div
+            class="rise mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-gray-600 dark:text-gray-400"
+            style="animation-delay: 0.8s"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M19 14l-7 7m0 0l-7-7m7 7V3"
-            />
-          </svg>
-        </button>
-      </div>
-    </section>
-
-    <!-- Technology Slider Section -->
-    <section class="py-8 sm:py-12 overflow-hidden" :class="techSliderClasses">
-      <div class="container mx-auto px-4">
-        <!-- Section Header -->
-        <div class="text-center mb-6 sm:mb-8">
-          <div class="inline-flex items-center justify-center mb-3 sm:mb-4">
-            <!-- Icon Container -->
-            <div
-              class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mr-2 sm:mr-3 transition-colors duration-300"
-              :class="sectionIconClasses"
-            >
+            <span class="inline-flex items-center gap-2">
               <svg
-                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 text-blue-500"
                 fill="none"
-                viewBox="0 0 24 24"
                 stroke="currentColor"
-                class="w-4 h-4 sm:w-6 sm:h-6 text-white"
+                stroke-width="1.7"
+                viewBox="0 0 24 24"
               >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 6.75v10.5a2.25 2.25 0 0 0 2.25 2.25Zm.75-12h9v9h-9v-9Z"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-            </div>
-            <h2 class="text-2xl sm:text-3xl font-bold" :class="sectionTitleClasses">
-              Technology Stack
-            </h2>
-          </div>
-          <p :class="sectionSubtitleClasses">Technologies I worked with</p>
-        </div>
-
-        <!-- Infinite Scroll Container -->
-        <div class="relative">
-          <!-- Gradient Overlays -->
-          <div
-            class="absolute left-0 top-0 bottom-0 w-16 sm:w-32 z-10 pointer-events-none"
-            :class="techSliderGradientLeft"
-          ></div>
-          <div
-            class="absolute right-0 top-0 bottom-0 w-16 sm:w-32 z-10 pointer-events-none"
-            :class="techSliderGradientRight"
-          ></div>
-
-          <!-- First Scroll Track -->
-          <div class="flex overflow-hidden">
-            <div class="flex animate-infinite-scroll py-4">
-              <div
-                v-for="(tech, index) in techStack"
-                :key="'first-' + index"
-                class="mx-2 sm:mx-3 md:mx-4 group cursor-pointer"
-              >
-                <div class="flex flex-col items-center">
-                  <!-- Tech Icon/Logo Container -->
-                  <div
-                    class="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-2xl p-2 sm:p-3 md:p-4 flex items-center justify-center border transition-all duration-300 shadow-lg group-hover:scale-105"
-                    :class="techCardClasses"
-                  >
-                    <!-- Logo Image -->
-                    <div v-if="tech.logo" class="relative w-full h-full">
-                      <img
-                        :src="tech.logo"
-                        :alt="tech.name"
-                        class="w-full h-full object-contain filter group-hover:brightness-125 transition-all duration-300"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Tech Name and Category -->
-                  <div class="mt-2 sm:mt-3 text-center">
-                    <div
-                      class="font-semibold transition-colors text-xs sm:text-sm md:text-base"
-                      :class="techNameClasses"
-                    >
-                      {{ tech.name }}
-                    </div>
-                    <div class="text-xs text-gray-400 mt-1">
-                      {{ tech.category }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Duplicate for seamless loop -->
-            <div class="flex animate-infinite-scroll py-4" aria-hidden="true">
-              <div
-                v-for="(tech, index) in techStack"
-                :key="'second-' + index"
-                class="mx-2 sm:mx-3 md:mx-4 group cursor-pointer"
-              >
-                <div class="flex flex-col items-center">
-                  <div
-                    class="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-2xl p-2 sm:p-3 md:p-4 flex items-center justify-center border transition-all duration-300 shadow-lg group-hover:scale-105"
-                    :class="techCardClasses"
-                  >
-                    <div v-if="tech.logo" class="relative w-full h-full">
-                      <img
-                        :src="tech.logo"
-                        :alt="tech.name"
-                        class="w-full h-full object-contain filter group-hover:brightness-125 transition-all duration-300"
-                      />
-                    </div>
-                  </div>
-
-                  <div class="mt-2 sm:mt-3 text-center">
-                    <div
-                      class="font-semibold transition-colors text-xs sm:text-sm md:text-base"
-                      :class="techNameClasses"
-                    >
-                      {{ tech.name }}
-                    </div>
-                    <div class="text-xs text-gray-400 mt-1">
-                      {{ tech.category }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="py-12 sm:py-16 md:py-20" :class="aboutSectionClasses">
-      <div class="container mx-auto px-4 sm:px-6">
-        <!-- Title with Icon and Underline -->
-        <div class="mb-8 sm:mb-12 text-center opacity-0" ref="aboutTitle">
-          <div class="inline-flex items-center justify-center mb-3 sm:mb-4">
-            <div
-              class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mr-2 sm:mr-3 transition-colors duration-300"
-              :class="sectionIconClasses"
+              Phnom Penh, Cambodia
+            </span>
+            <a
+              href="mailto:kimsrenghai@gmail.com"
+              class="inline-flex items-center gap-2 hover:text-blue-600 dark:hover:text-blue-400"
             >
               <svg
-                class="w-4 h-4 sm:w-5 sm:h-5 text-white"
+                class="w-4 h-4 text-blue-500"
                 fill="none"
                 stroke="currentColor"
+                stroke-width="1.7"
                 viewBox="0 0 24 24"
               >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-            </div>
-            <h2 class="text-2xl sm:text-3xl font-bold" :class="sectionTitleClasses">About Me</h2>
-          </div>
-          <div class="relative">
-            <div
-              class="w-16 sm:w-24 h-1 mx-auto rounded-full transition-colors duration-300"
-              :class="sectionUnderlineClasses"
-            ></div>
-            <div
-              class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 sm:w-3 sm:h-3 rounded-full animate-pulse transition-colors duration-300"
-              :class="sectionUnderlineDotClasses"
-            ></div>
-          </div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-          <div ref="aboutLeft" class="opacity-0">
-            <p class="mb-4 md:mb-6 text-base sm:text-lg" :class="aboutTextClasses">
-              I am a motivated Full-Stack Developer and Mobile Developer with experience building
-              web applications, real-time systems, and modern user interfaces. I work with Laravel,
-              Next.js, Nest.js, PostgreSQL, Redis, and also develop mobile apps using Flutter.
-            </p>
-            <p class="mb-4 md:mb-6 text-base sm:text-lg" :class="aboutTextClasses">
-              I enjoy solving problems, designing systems, and creating efficient platforms such as
-              e-management and e-commerce systems. I am passionate about learning new skills,
-              working with teams, and delivering good-quality work.
-            </p>
-            <div class="flex flex-wrap gap-3 md:gap-4 mb-6">
-              <div
-                v-for="stat in experienceStats"
-                :key="stat.label"
-                class="p-3 rounded-lg transition-colors duration-300"
-                :class="experienceStatClasses"
-              >
-                <div :class="experienceStatNumberClasses">{{ stat.number }}</div>
-                <div class="text-xs sm:text-sm" :class="experienceStatLabelClasses">
-                  {{ stat.label }}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div ref="aboutRight" class="opacity-0">
-            <h3 class="text-lg sm:text-xl font-bold mb-3 md:mb-4" :class="competenciesTitleClasses">
-              ❖ Core Competencies
-            </h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-              <div
-                v-for="skill in coreCompetencies"
-                :key="skill.name"
-                class="p-3 sm:p-4 rounded-lg transition-colors duration-300"
-                :class="competencyCardClasses"
-              >
-                <div class="font-semibold text-sm sm:text-base" :class="competencyNameClasses">
-                  {{ skill.name }}
-                </div>
-                <div class="text-xs sm:text-sm mt-1" :class="competencyItemsClasses">
-                  {{ skill.items.join(', ') }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Experience Section -->
-    <section id="experience" class="py-12 sm:py-16 md:py-20" :class="experienceSectionClasses">
-      <div class="container mx-auto px-4 sm:px-6">
-        <!-- Title with Icon and Underline -->
-        <div class="mb-8 sm:mb-12 text-center opacity-0" ref="experienceTitle">
-          <div class="inline-flex items-center justify-center mb-3 sm:mb-4">
-            <div
-              class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mr-2 sm:mr-3 transition-colors duration-300"
-              :class="sectionIconClasses"
-            >
-              <svg
-                class="w-4 h-4 sm:w-5 sm:h-5 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
-            </div>
-            <h2 class="text-2xl sm:text-3xl font-bold" :class="sectionTitleClasses">
-              Work Experience
-            </h2>
-          </div>
-          <div class="relative">
-            <div
-              class="w-16 sm:w-24 h-1 mx-auto rounded-full transition-colors duration-300"
-              :class="sectionUnderlineClasses"
-            ></div>
-            <div
-              class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 sm:w-3 sm:h-3 rounded-full animate-pulse transition-colors duration-300"
-              :class="sectionUnderlineDotClasses"
-            ></div>
-          </div>
-        </div>
-        <div class="space-y-6 sm:space-y-8 md:space-y-12">
-          <div
-            v-for="(exp, index) in experiences"
-            :key="index"
-            :ref="`exp-${index}`"
-            class="opacity-0 relative overflow-hidden"
-          >
-            <div
-              class="rounded-xl p-4 sm:p-6 shadow-lg transition-colors duration-300 relative z-10 overflow-hidden"
-              :class="experienceCardClasses"
-            >
-              <!-- Background Pattern - Right Side -->
-              <div
-                class="absolute bottom-0 right-0 h-full w-1/4 md:w-1/3 opacity-10 md:opacity-20 pointer-events-none z-0"
-              >
-                <img
-                  src="../assets/images/kbach_kh.png"
-                  alt="Khmer Kbach Pattern"
-                  class="h-full w-full object-contain object-right-bottom"
-                />
-              </div>
-
-              <div class="flex flex-col md:flex-row justify-between mb-3 sm:mb-4 relative z-10">
-                <h3
-                  class="text-lg sm:text-xl font-bold mb-2 md:mb-0"
-                  :class="experienceTitleClasses"
-                >
-                  ❖ {{ exp.title }}
-                </h3>
-                <div :class="experiencePeriodClasses">{{ exp.period }}</div>
-              </div>
-              <p
-                class="mb-4 md:mb-6 text-sm sm:text-base relative z-10"
-                :class="experienceDescriptionClasses"
-              >
-                {{ exp.description }}
-              </p>
-              <div class="flex flex-wrap gap-2 mb-3 sm:mb-4 relative z-10">
-                <span
-                  v-for="tech in exp.technologies"
-                  :key="tech"
-                  class="px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm transition-colors duration-300"
-                  :class="experienceTechClasses"
-                >
-                  {{ tech }}
-                </span>
-              </div>
-              <ul class="space-y-1 sm:space-y-2 relative z-10">
-                <li
-                  v-for="(detail, detailIndex) in exp.details"
-                  :key="detailIndex"
-                  class="flex items-start"
-                >
-                  <div class="mr-2 mt-1" :class="experienceDetailDotClasses">•</div>
-                  <div class="text-sm sm:text-base" :class="experienceDetailTextClasses">
-                    {{ detail }}
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Projects Section -->
-    <section id="projects" class="py-12 sm:py-16 md:py-20" :class="projectsSectionClasses">
-      <div class="container mx-auto px-4 sm:px-6">
-        <!-- Title with Icon and Underline -->
-        <div class="mb-8 sm:mb-12 text-center opacity-0" ref="projectsTitle">
-          <div class="inline-flex items-center justify-center mb-3 sm:mb-4">
-            <div
-              class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mr-2 sm:mr-3 transition-colors duration-300"
-              :class="sectionIconClasses"
-            >
-              <svg
-                class="w-4 h-4 sm:w-5 sm:h-5 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                />
-              </svg>
-            </div>
-            <h2 class="text-2xl sm:text-3xl font-bold" :class="sectionTitleClasses">
-              Key Projects
-            </h2>
-          </div>
-          <div class="relative">
-            <div
-              class="w-16 sm:w-24 h-1 mx-auto rounded-full transition-colors duration-300"
-              :class="sectionUnderlineClasses"
-            ></div>
-            <div
-              class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 sm:w-3 sm:h-3 rounded-full animate-pulse transition-colors duration-300"
-              :class="sectionUnderlineDotClasses"
-            ></div>
-          </div>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          <div
-            v-for="project in projects"
-            :key="project.id"
-            :ref="`project-${project.id}`"
-            class="opacity-0 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 relative group"
-            :class="projectCardClasses"
-          >
-            <!-- Background Effects -->
-            <div
-              class="absolute inset-0 bg-gradient-to-br from-blue-100/30 via-purple-100/20 to-pink-100/30 dark:from-blue-400/10 dark:via-purple-100/10 dark:to-black/10 pointer-events-none z-0"
-            ></div>
-
-            <!-- Background Effects - Geometric Accents -->
-            <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-              <div
-                class="absolute -top-6 -right-6 w-32 h-32 border-2 border-gray-300 dark:border-current rounded-full opacity-40 dark:opacity-20 group-hover:opacity-60 dark:group-hover:opacity-30 transition-opacity duration-300"
-              ></div>
-              <div
-                class="absolute -bottom-6 -left-6 w-40 h-40 border-2 border-gray-300 dark:border-current transform rotate-45 opacity-40 dark:opacity-20 group-hover:opacity-60 dark:group-hover:opacity-30 transition-opacity duration-300"
-              ></div>
-            </div>
-
-            <div class="relative z-10 p-4 sm:p-6">
-              <div class="font-bold text-lg sm:text-xl mb-1 sm:mb-2" :class="projectTitleClasses">
-                ❖ {{ project.name }}
-              </div>
-              <div class="text-sm mb-3 sm:mb-4" :class="projectYearClasses">{{ project.year }}</div>
-              <p class="mb-4 sm:mb-6 text-sm sm:text-base" :class="projectDescriptionClasses">
-                {{ project.description }}
-              </p>
-              <div class="flex flex-wrap gap-1 sm:gap-2">
-                <span
-                  v-for="tech in project.technologies"
-                  :key="tech"
-                  class="px-2 sm:px-3 py-1 rounded-full text-xs transition-colors duration-300 relative z-20"
-                  :class="projectTechClasses"
-                >
-                  {{ tech }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Education Section -->
-    <section id="education" class="py-12 sm:py-16 md:py-20" :class="educationSectionClasses">
-      <div class="container mx-auto px-4 sm:px-6">
-        <!-- Title with Icon and Underline -->
-        <div class="mb-8 sm:mb-12 text-center opacity-0" ref="educationTitle">
-          <div class="inline-flex items-center justify-center mb-3 sm:mb-4">
-            <div
-              class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mr-2 sm:mr-3 transition-colors duration-300"
-              :class="sectionIconClasses"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-4 h-4 sm:w-5 sm:h-5 text-white"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"
-                />
-              </svg>
-            </div>
-            <h2 class="text-2xl sm:text-3xl font-bold" :class="sectionTitleClasses">Education</h2>
-          </div>
-          <div class="relative">
-            <div
-              class="w-16 sm:w-24 h-1 mx-auto rounded-full transition-colors duration-300"
-              :class="sectionUnderlineClasses"
-            ></div>
-            <div
-              class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 sm:w-3 sm:h-3 rounded-full animate-pulse transition-colors duration-300"
-              :class="sectionUnderlineDotClasses"
-            ></div>
-          </div>
-        </div>
-        <div
-          ref="educationContent"
-          class="rounded-xl p-4 sm:p-6 md:p-8 shadow-lg opacity-0 transition-colors duration-300"
-          :class="educationContentClasses"
-        >
-          <h3 class="text-xl sm:text-2xl font-bold mb-1 sm:mb-2" :class="educationDegreeClasses">
-            ❖ Bachelor of Engineering in Information & Communication Technology (ICT)
-          </h3>
-          <div class="text-sm sm:text-lg mb-4 sm:mb-6" :class="educationInstitutionClasses">
-            Institute of Technology of Cambodia (ITC) - 2021 - Present
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            <div
-              v-for="year in educationYears"
-              :key="year.year"
-              class="p-4 sm:p-6 rounded-lg transition-colors duration-300 relative overflow-hidden border-l-4"
-              :class="[
-                educationYearCardClasses,
-                year.year === 'Foundation'
-                  ? 'border-blue-500'
-                  : year.year === 'Year 2'
-                    ? 'border-green-500'
-                    : year.year === 'Year 3'
-                      ? 'border-purple-500'
-                      : year.year === 'Year 4'
-                        ? 'border-orange-500'
-                        : 'border-pink-500',
-              ]"
-            >
-              <!-- Subtle Binary Pattern -->
-              <div class="absolute bottom-2 right-2 opacity-10 dark:opacity-20 text-xs font-mono">
-                1010{{ year.year.slice(-1) }}0101
-              </div>
-
-              <!-- Year Badge -->
-              <div
-                class="absolute top-3 right-3 px-2 py-1 rounded text-xs font-bold"
-                :class="
-                  year.year === 'Foundation'
-                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300'
-                    : year.year === 'Year 5'
-                      ? 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-300'
-                      : 'bg-gray-100 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300'
-                "
-              >
-                {{ year.year.slice(0, 1) }}{{ year.year.slice(-1) }}
-              </div>
-
-              <h4
-                class="text-lg sm:text-xl font-bold mb-3 sm:mb-4 pr-12 flex items-center gap-2"
-                :class="educationYearTitleClasses"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-5 h-5 sm:w-6 sm:h-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"
-                  />
-                </svg>
-                {{ year.year }}
-              </h4>
-              <ul class="space-y-1 sm:space-y-2">
-                <li
-                  v-for="(course, index) in year.courses"
-                  :key="index"
-                  class="text-sm sm:text-base"
-                  :class="educationCourseClasses"
-                >
-                  • {{ course }}
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="mt-8 sm:mt-10">
-            <h3
-              class="text-lg sm:text-xl font-bold mb-3 sm:mb-4"
-              :class="certificationTitleClasses"
-            >
-              Certifications & Professional Development
-            </h3>
-            <div
-              class="p-4 sm:p-6 rounded-lg transition-colors duration-300"
-              :class="certificationCardClasses"
-            >
-              <div
-                class="font-bold text-base sm:text-lg mb-1 sm:mb-2"
-                :class="certificationNameClasses"
-              >
-                AWS Cloud Computing – Certificate of Completion
-              </div>
-              <p class="text-sm sm:text-base" :class="certificationDescriptionClasses">
-                Online learning in system design, cloud fundamentals, and backend architecture.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-12 sm:py-16 md:py-20" :class="contactSectionClasses">
-      <div class="container mx-auto px-4 sm:px-6">
-        <!-- Title with Icon and Underline -->
-        <div class="mb-8 sm:mb-12 text-center opacity-0" ref="contactTitle">
-          <div class="inline-flex items-center justify-center mb-3 sm:mb-4">
-            <div
-              class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mr-2 sm:mr-3 transition-colors duration-300"
-              :class="sectionIconClasses"
-            >
-              <svg
-                class="w-4 h-4 sm:w-5 sm:h-5 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
                   d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                 />
               </svg>
-            </div>
-            <h2 class="text-2xl sm:text-3xl font-bold" :class="sectionTitleClasses">Contact</h2>
-          </div>
-          <div class="relative">
-            <div
-              class="w-16 sm:w-24 h-1 mx-auto rounded-full transition-colors duration-300"
-              :class="sectionUnderlineClasses"
-            ></div>
-            <div
-              class="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 sm:w-3 sm:h-3 rounded-full animate-pulse transition-colors duration-300"
-              :class="sectionUnderlineDotClasses"
-            ></div>
+              kimsrenghai@gmail.com
+            </a>
+            <a
+              href="https://www.linkedin.com/in/hai-kim-sreng-a0527b274/"
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center gap-2 hover:text-blue-600 dark:hover:text-blue-400"
+            >
+              <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                />
+              </svg>
+              LinkedIn
+            </a>
           </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-          <div ref="contactLeft" class="opacity-0">
-            <h3 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6" :class="contactTitleClasses">
-              Get In Touch
-            </h3>
-            <p class="mb-6 md:mb-8 text-sm sm:text-base" :class="contactTextClasses">
-              I'm always open to discussing new opportunities, interesting projects, or just having
-              a chat about technology.
-            </p>
 
-            <div class="space-y-4 sm:space-y-6">
-              <div class="flex items-center">
-                <div
-                  class="p-2 sm:p-3 rounded-lg mr-3 sm:mr-4 transition-colors duration-300"
-                  :class="contactIconClasses"
-                >
-                  <svg
-                    class="w-5 h-5 sm:w-6 sm:h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    ></path>
-                  </svg>
-                </div>
-                <div>
-                  <div class="font-bold text-sm sm:text-base" :class="contactLabelClasses">
-                    Email
-                  </div>
-                  <div class="text-sm sm:text-base" :class="contactValueClasses">
-                    kimsrenghai@gmail.com
-                  </div>
-                </div>
+        <!-- Portrait -->
+        <div class="relative mx-auto w-full max-w-md">
+          <div class="pulse-ring"></div>
+          <div class="pulse-ring" style="animation-delay: 1.5s"></div>
+          <div class="pulse-ring" style="animation-delay: 3s"></div>
+          <span class="orbit-dot" style="--r: 190px; animation: orbit-a 13s linear infinite"></span>
+          <span
+            class="orbit-dot small"
+            style="--r: 215px; animation: orbit-b 18s linear infinite reverse"
+          ></span>
+
+          <div
+            class="relative mx-auto w-[280px] h-[280px] sm:w-[340px] sm:h-[340px] rounded-full p-1.5 bg-gradient-to-br from-blue-400 via-blue-600 to-blue-800 shadow-2xl z-10"
+          >
+            <img
+              :src="profileImage"
+              alt="HAI KIMSRENG"
+              class="w-full h-full rounded-full object-cover object-top border-4 border-white dark:border-gray-900"
+            />
+          </div>
+
+          <!-- Khmer flower accents -->
+          <img
+            v-for="(pos, i) in flowerPositions"
+            :key="i"
+            src="../assets/images/flower.png"
+            alt=""
+            class="khmer-flower absolute w-12 h-12 sm:w-14 sm:h-14 object-contain brightness-75 drop-shadow-lg z-20"
+            :class="pos.class"
+            :style="{ '--rotation': pos.rotation, 'animation-delay': pos.delay }"
+          />
+
+          <!-- Floating stats -->
+          <div
+            class="absolute left-1/2 -translate-x-1/2 -bottom-8 z-30 w-[min(360px,90vw)] flex justify-center gap-6 px-6 py-4 rounded-2xl border shadow-2xl bg-white border-gray-200 dark:bg-gray-900/95 dark:border-gray-700 float-stats"
+          >
+            <div v-for="stat in heroStats" :key="stat.label" class="text-center">
+              <div class="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
+                {{ stat.value }}
               </div>
-
-              <div class="flex items-center">
-                <div
-                  class="p-2 sm:p-3 rounded-lg mr-3 sm:mr-4 transition-colors duration-300"
-                  :class="contactIconClasses"
-                >
-                  <svg
-                    class="w-5 h-5 sm:w-6 sm:h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                    ></path>
-                  </svg>
-                </div>
-                <div>
-                  <div class="font-bold text-sm sm:text-base" :class="contactLabelClasses">
-                    Phone
-                  </div>
-                  <div class="text-sm sm:text-base" :class="contactValueClasses">069-376-706</div>
-                </div>
-              </div>
-
-              <div class="flex items-center">
-                <div
-                  class="p-2 sm:p-3 rounded-lg mr-3 sm:mr-4 transition-colors duration-300"
-                  :class="contactIconClasses"
-                >
-                  <svg
-                    class="w-5 h-5 sm:w-6 sm:h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    ></path>
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    ></path>
-                  </svg>
-                </div>
-                <div>
-                  <div class="font-bold text-sm sm:text-base" :class="contactLabelClasses">
-                    Location
-                  </div>
-                  <div class="text-sm sm:text-base" :class="contactValueClasses">
-                    Phnom Penh, Cambodia
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-6 sm:mt-8">
-              <h4 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4" :class="languagesTitleClasses">
-                Languages
-              </h4>
-              <div class="space-y-3 max-w-md">
-                <div
-                  v-for="lang in languages"
-                  :key="lang.name"
-                  class="flex items-center gap-3 p-3 rounded-xl transition-colors duration-300"
-                  :class="languageCardClasses"
-                >
-                  <!-- Flag -->
-                  <div
-                    class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border border-gray-200 dark:border-gray-700"
-                  >
-                    <img
-                      :src="getLanguageLogo(lang.name)"
-                      :alt="`${lang.name} flag`"
-                      class="w-full h-full object-cover"
-                    />
-                  </div>
-
-                  <!-- Content with progress -->
-                  <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-center mb-1">
-                      <div
-                        class="font-bold text-sm sm:text-base truncate"
-                        :class="languageNameClasses"
-                      >
-                        {{ lang.name }}
-                      </div>
-                      <div
-                        class="text-xs font-medium px-2 py-0.5 rounded-full"
-                        :class="[
-                          languageLevelClasses,
-                          lang.level === 'Native'
-                            ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
-                            : lang.level === 'Fluent'
-                              ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300'
-                              : 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300',
-                        ]"
-                      >
-                        {{ lang.level }}
-                      </div>
-                    </div>
-
-                    <!-- Proficiency bar -->
-                    <div
-                      class="h-1.5 w-full bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden"
-                    >
-                      <div
-                        class="h-full rounded-full transition-all duration-500"
-                        :class="[
-                          lang.level === 'Native'
-                            ? 'bg-green-500 dark:bg-green-600'
-                            : lang.level === 'Fluent'
-                              ? 'bg-yellow-500 dark:bg-yellow-600'
-                              : 'bg-blue-500 dark:bg-blue-600',
-                        ]"
-                        :style="{
-                          width:
-                            lang.level === 'Native'
-                              ? '100%'
-                              : lang.level === 'Fluent'
-                                ? '75%'
-                                : '35%',
-                        }"
-                      ></div>
-                    </div>
-                  </div>
-                </div>
+              <div class="mt-1 text-[11px] leading-tight text-gray-500 dark:text-gray-400">
+                {{ stat.label }}
               </div>
             </div>
           </div>
 
-          <div ref="contactRight" class="opacity-0">
-            <h3 class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6" :class="skillsTitleClasses">
-              Skills & Abilities
-            </h3>
+          <!-- Industry chips -->
+          <div
+            v-for="(chip, i) in heroChips"
+            :key="chip.label"
+            class="hidden xl:flex absolute z-30 flex-col items-center gap-2 w-[104px] py-3 px-2 rounded-2xl border shadow-xl text-center bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700 chip-float"
+            :class="chip.class"
+            :style="{ animationDelay: i * 0.4 + 's' }"
+          >
+            <svg
+              class="w-5 h-5 text-blue-500"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" :d="chip.icon" />
+            </svg>
+            <span class="text-[11px] font-semibold leading-tight">{{ chip.label }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
-            <div class="mb-6 sm:mb-8">
-              <h4
-                class="text-lg sm:text-xl font-bold mb-3 sm:mb-4"
-                :class="technicalSkillsTitleClasses"
+    <!-- About -->
+    <section
+      id="about"
+      class="py-20 sm:py-24 bg-gray-50 dark:bg-gray-900 border-y border-gray-200 dark:border-gray-800"
+    >
+      <div class="container mx-auto px-5 sm:px-7 grid lg:grid-cols-2 gap-12 items-start">
+        <div class="reveal">
+          <p
+            class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600 dark:text-blue-400"
+          >
+            About
+          </p>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
+            Leading people, building systems
+          </h2>
+          <p class="mt-5 text-gray-600 dark:text-gray-300 leading-relaxed">
+            I am a motivated Full-Stack and Mobile Developer who now leads a team at DRDC. I work
+            with Laravel, Next.js, Nest.js, PostgreSQL, Redis and Flutter, and I enjoy designing
+            systems, managing the team and keeping our servers running reliably.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-2">
+            <span
+              v-for="skill in softSkills"
+              :key="skill"
+              class="px-4 py-1.5 rounded-full text-sm font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300"
+            >
+              {{ skill }}
+            </span>
+          </div>
+        </div>
+
+        <div class="reveal grid gap-5">
+          <!-- Education -->
+          <div
+            class="p-6 rounded-2xl border-l-4 border-blue-500 bg-white border border-gray-200 dark:bg-gray-950 dark:border-gray-800 shadow-lg"
+          >
+            <div
+              class="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400"
+            >
+              Education
+            </div>
+            <h3 class="mt-2 text-lg font-bold">Bachelor of Engineering in ICT</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              Institute of Technology of Cambodia (ITC) · 2021 – Present
+            </p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <span
+                v-for="course in courses"
+                :key="course"
+                class="px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
               >
-                Technical Skills
-              </h4>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                <div
-                  v-for="skill in technicalSkills"
-                  :key="skill.name"
-                  class="p-3 sm:p-4 rounded-lg transition-colors duration-300"
-                  :class="technicalSkillCardClasses"
-                >
-                  <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                    <!-- Skill Logo -->
-                    <div class="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0">
-                      <img
-                        :src="getTechLogo(skill.name)"
-                        :alt="skill.name"
-                        class="w-full h-full object-contain"
-                      />
-                    </div>
+                {{ course }}
+              </span>
+            </div>
+          </div>
 
-                    <div class="flex-1 flex justify-between items-center">
-                      <div class="font-bold text-sm sm:text-base" :class="skillNameClasses">
-                        {{ skill.name }}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div
-                      class="h-full rounded-full transition-all duration-700"
-                      :class="getSkillColor(skill.name)"
-                      :style="{ width: skill.level + '%' }"
-                    ></div>
-                  </div>
+          <!-- Certification -->
+          <div
+            class="p-6 rounded-2xl border bg-white border-gray-200 dark:bg-gray-950 dark:border-gray-800 shadow-lg"
+          >
+            <div
+              class="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400"
+            >
+              Certification
+            </div>
+            <h3 class="mt-2 font-bold">AWS Cloud Computing – Certificate of Completion</h3>
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              Online learning in system design, cloud fundamentals, and backend architecture.
+            </p>
+          </div>
+
+          <!-- Languages -->
+          <div
+            class="p-6 rounded-2xl border bg-white border-gray-200 dark:bg-gray-950 dark:border-gray-800 shadow-lg"
+          >
+            <div
+              class="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400"
+            >
+              Languages
+            </div>
+            <div class="mt-4 space-y-4">
+              <div v-for="lang in languages" :key="lang.name">
+                <div class="flex justify-between text-sm font-semibold">
+                  <span>{{ lang.name }}</span>
+                  <span class="text-gray-500 dark:text-gray-400">{{ lang.level }}</span>
+                </div>
+                <div class="mt-1.5 h-1.5 rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden">
+                  <div
+                    class="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-700"
+                    :style="{ width: lang.percent + '%' }"
+                  ></div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-            <div>
-              <h4 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4" :class="softSkillsTitleClasses">
-                Soft Skills
-              </h4>
-              <div class="flex flex-wrap gap-2 sm:gap-3">
-                <span
-                  v-for="skill in softSkills"
-                  :key="skill"
-                  class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-sm sm:text-base transition-colors duration-300"
-                  :class="softSkillTagClasses"
+    <!-- Experience -->
+    <section id="experience" class="relative py-20 sm:py-24 overflow-hidden">
+      <div class="container mx-auto px-5 sm:px-7 grid lg:grid-cols-[1fr_0.9fr] gap-14 items-start">
+        <div class="reveal">
+          <p
+            class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600 dark:text-blue-400"
+          >
+            Career
+          </p>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
+            Where I've Made <span class="text-blue-600 dark:text-blue-400">Impact</span>
+          </h2>
+          <p class="mt-5 text-gray-600 dark:text-gray-300">
+            Leading the team on drone and automation projects, and keeping the systems behind them
+            running.
+          </p>
+
+          <div class="relative mt-10 pl-16">
+            <div
+              class="absolute left-[23px] top-4 bottom-4 w-0.5 bg-blue-200 dark:bg-blue-900"
+            ></div>
+            <div
+              v-for="item in experience"
+              :key="item.role"
+              class="reveal relative pb-10 last:pb-0"
+            >
+              <div
+                class="absolute -left-16 top-0 w-12 h-12 rounded-full flex items-center justify-center border shadow-lg"
+                :class="
+                  item.current
+                    ? 'bg-gradient-to-br from-blue-500 to-blue-700 border-transparent text-white'
+                    : 'bg-white border-gray-200 text-blue-500 dark:bg-gray-900 dark:border-gray-700'
+                "
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  viewBox="0 0 24 24"
                 >
-                  {{ skill }}
+                  <path stroke-linecap="round" stroke-linejoin="round" :d="item.icon" />
+                </svg>
+              </div>
+
+              <div
+                class="p-6 rounded-2xl border bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-800 shadow-md"
+              >
+                <div class="flex flex-wrap items-center gap-3">
+                  <h3 class="text-lg font-bold">{{ item.role }}</h3>
+                  <span
+                    v-if="item.current"
+                    class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
+                  >
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                    Current
+                  </span>
+                </div>
+                <div class="mt-1 font-semibold text-blue-600 dark:text-blue-400">
+                  {{ item.org }}
+                </div>
+                <div class="text-sm text-gray-500 dark:text-gray-400">{{ item.period }}</div>
+                <ul class="mt-4 space-y-2">
+                  <li
+                    v-for="bullet in item.bullets"
+                    :key="bullet"
+                    class="flex gap-2 text-sm text-gray-600 dark:text-gray-300"
+                  >
+                    <span class="text-blue-500 font-bold">›</span>
+                    <span>{{ bullet }}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal relative">
+          <div class="relative aspect-square max-w-md mx-auto">
+            <div
+              class="absolute inset-0 rounded-full border border-blue-500/20 animate-spin-slow"
+            ></div>
+            <div
+              class="absolute inset-[14%] rounded-full border border-blue-500/15 animate-spin-slow-reverse"
+            ></div>
+            <div
+              class="absolute inset-[24%] rounded-full overflow-hidden bg-gradient-to-br from-blue-500 via-blue-700 to-blue-950 shadow-2xl flex items-center justify-center"
+            >
+              <img
+                src="../assets/images/kh_flower.png"
+                alt="Khmer flower"
+                class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay"
+              />
+              <span class="relative text-center text-white">
+                <span class="block text-5xl font-bold">❖</span>
+                <span class="block mt-2 text-xs uppercase tracking-[0.2em] opacity-80">DRDC</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Workflow -->
+    <section
+      id="workflow"
+      class="py-20 sm:py-24 bg-blue-50/60 dark:bg-gray-900 border-y border-gray-200 dark:border-gray-800"
+    >
+      <div class="container mx-auto px-5 sm:px-7">
+        <div class="reveal max-w-2xl mx-auto text-center">
+          <p
+            class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600 dark:text-blue-400"
+          >
+            Workflow
+          </p>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">How I Lead a Project</h2>
+          <p class="mt-4 text-gray-600 dark:text-gray-300">
+            From understanding the problem to delivering it, I guide the team at every stage. Hover
+            or click any step to explore it.
+          </p>
+        </div>
+
+        <div class="reveal mt-14">
+          <div class="relative">
+            <div
+              class="hidden md:block absolute left-[6%] right-[6%] top-7 h-0.5 bg-blue-200 dark:bg-gray-700"
+            >
+              <div
+                class="h-full rounded-full bg-gradient-to-r from-blue-500 to-blue-300 transition-all duration-700"
+                :style="{ width: railWidth }"
+              ></div>
+            </div>
+
+            <div class="relative grid grid-cols-2 md:grid-cols-6 gap-6">
+              <button
+                v-for="(step, i) in workflowSteps"
+                :key="step.name"
+                @click="selectStep(i)"
+                @mouseenter="selectStep(i)"
+                class="flex flex-col items-center gap-3 text-center group"
+              >
+                <span
+                  class="w-14 h-14 rounded-full flex items-center justify-center border transition-all duration-500"
+                  :class="
+                    i <= workflowIndex
+                      ? 'bg-gradient-to-br from-blue-500 to-blue-700 border-transparent text-white shadow-xl'
+                      : 'bg-white border-gray-300 text-gray-400 dark:bg-gray-800 dark:border-gray-700'
+                  "
+                  :style="i === workflowIndex ? { transform: 'scale(1.12)' } : {}"
+                >
+                  <svg
+                    class="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    viewBox="0 0 24 24"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" :d="step.icon" />
+                  </svg>
+                </span>
+                <span class="text-xs font-mono text-blue-600 dark:text-blue-400">{{
+                  step.num
+                }}</span>
+                <span
+                  class="text-sm font-semibold leading-tight"
+                  :class="
+                    i === workflowIndex
+                      ? 'text-gray-900 dark:text-white'
+                      : 'text-gray-500 dark:text-gray-400'
+                  "
+                >
+                  {{ step.name }}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-12 max-w-2xl mx-auto min-h-[64px] text-center">
+            <div
+              class="text-xs font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400"
+            >
+              Stage {{ workflowSteps[workflowIndex].num }} · {{ workflowSteps[workflowIndex].name }}
+            </div>
+            <p class="mt-2 text-gray-700 dark:text-gray-300">
+              {{ workflowSteps[workflowIndex].description }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects" class="py-20 sm:py-24">
+      <div class="container mx-auto px-5 sm:px-7">
+        <div class="reveal max-w-2xl mx-auto text-center">
+          <p
+            class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600 dark:text-blue-400"
+          >
+            Projects
+          </p>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">
+            Work at DRDC &amp; Beyond
+          </h2>
+          <p class="mt-4 text-gray-600 dark:text-gray-300">
+            Drone delivery and team-led project work, plus automation and platform projects.
+          </p>
+        </div>
+
+        <div class="reveal mt-14 grid lg:grid-cols-2 gap-12 items-center">
+          <div
+            class="relative aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-blue-500 via-blue-700 to-blue-950 flex items-center justify-center"
+          >
+            <img
+              src="../assets/images/kh_flower.png"
+              alt=""
+              class="absolute inset-0 w-full h-full object-cover opacity-25 mix-blend-overlay"
+            />
+            <span class="relative text-[120px] font-bold text-white/90 leading-none">{{
+              projectNumber
+            }}</span>
+          </div>
+
+          <div>
+            <div class="flex items-center gap-3">
+              <span class="text-sm font-mono text-blue-600 dark:text-blue-400">{{
+                projectNumber
+              }}</span>
+              <span class="h-px w-7 bg-gray-300 dark:bg-gray-700"></span>
+              <span class="text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400">{{
+                currentProject.category
+              }}</span>
+            </div>
+            <h3 class="mt-4 text-3xl font-bold">❖ {{ currentProject.name }}</h3>
+            <p class="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">
+              {{ currentProject.description }}
+            </p>
+            <div class="mt-5 flex flex-wrap gap-2">
+              <span
+                v-for="tag in currentProject.tags"
+                :key="tag"
+                class="px-3 py-1 rounded-lg text-xs font-medium border bg-gray-50 border-gray-200 text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-blue-300"
+              >
+                {{ tag }}
+              </span>
+            </div>
+
+            <div class="mt-10 flex items-center justify-between">
+              <div class="flex gap-2">
+                <button
+                  v-for="(project, i) in projects"
+                  :key="project.name"
+                  @click="activeProject = i"
+                  class="h-2 rounded-full transition-all duration-300"
+                  :class="
+                    i === activeProject ? 'w-7 bg-blue-600' : 'w-2 bg-gray-300 dark:bg-gray-700'
+                  "
+                  :aria-label="'Show ' + project.name"
+                ></button>
+              </div>
+              <div class="flex gap-3">
+                <button
+                  @click="prevProject"
+                  class="w-10 h-10 rounded-full border flex items-center justify-center bg-white border-gray-300 hover:bg-blue-600 hover:border-blue-600 hover:text-white dark:bg-gray-900 dark:border-gray-700 transition-all duration-300"
+                  aria-label="Previous project"
+                >
+                  <svg
+                    class="w-4 h-4 rotate-180"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M5 12h14m-6-6l6 6-6 6"
+                    />
+                  </svg>
+                </button>
+                <button
+                  @click="nextProject"
+                  class="w-10 h-10 rounded-full border flex items-center justify-center bg-white border-gray-300 hover:bg-blue-600 hover:border-blue-600 hover:text-white dark:bg-gray-900 dark:border-gray-700 transition-all duration-300"
+                  aria-label="Next project"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M5 12h14m-6-6l6 6-6 6"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section
+      id="skills"
+      class="py-20 sm:py-24 bg-gray-50 dark:bg-gray-900 border-y border-gray-200 dark:border-gray-800"
+    >
+      <div class="container mx-auto px-5 sm:px-7">
+        <div class="reveal max-w-2xl mx-auto text-center">
+          <p
+            class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600 dark:text-blue-400"
+          >
+            Capabilities
+          </p>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">What I Do Best</h2>
+          <p class="mt-4 text-gray-600 dark:text-gray-300">
+            Team leadership, server management and full-stack development, brought together to
+            deliver working systems.
+          </p>
+        </div>
+
+        <div class="reveal mt-14 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div
+            v-for="cap in capabilities"
+            :key="cap.title"
+            class="group p-6 rounded-2xl border bg-white border-gray-200 hover:border-blue-400 hover:shadow-2xl hover:-translate-y-1.5 dark:bg-gray-950 dark:border-gray-800 dark:hover:border-blue-500 transition-all duration-300"
+          >
+            <div
+              class="w-12 h-12 rounded-xl flex items-center justify-center mb-5 bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white dark:bg-blue-900/40 dark:text-blue-400 transition-colors duration-300"
+            >
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" :d="cap.icon" />
+              </svg>
+            </div>
+            <h3 class="font-bold mb-3">{{ cap.title }}</h3>
+            <ul class="space-y-2">
+              <li
+                v-for="item in cap.items"
+                :key="item"
+                class="flex gap-2 text-sm text-gray-600 dark:text-gray-400"
+              >
+                <span class="text-blue-500 font-bold">›</span>
+                {{ item }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div
+          class="reveal mt-10 p-6 sm:p-8 rounded-2xl border bg-white border-gray-200 dark:bg-gray-950 dark:border-gray-800 shadow-lg flex flex-col lg:flex-row gap-10"
+        >
+          <div class="lg:w-56 lg:pr-10 lg:border-r border-gray-200 dark:border-gray-800">
+            <div class="text-4xl font-bold text-blue-600 dark:text-blue-400">{{ techCount }}+</div>
+            <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              Technologies I work with
+            </div>
+          </div>
+          <div class="flex-1 grid sm:grid-cols-2 gap-6">
+            <div v-for="group in techGroups" :key="group.name">
+              <div
+                class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"
+              >
+                {{ group.name }}
+              </div>
+              <div class="mt-3 flex flex-wrap gap-2">
+                <span
+                  v-for="tech in group.items"
+                  :key="tech"
+                  class="px-3 py-1.5 rounded-lg text-sm border bg-gray-50 border-gray-200 hover:bg-blue-600 hover:border-blue-600 hover:text-white dark:bg-gray-800 dark:border-gray-700 transition-all duration-300"
+                >
+                  {{ tech }}
                 </span>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="py-20 sm:py-24">
+      <div class="container mx-auto px-5 sm:px-7 grid lg:grid-cols-2 gap-12 items-start">
+        <div class="reveal">
+          <p
+            class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600 dark:text-blue-400"
+          >
+            Contact
+          </p>
+          <h2 class="mt-3 text-3xl sm:text-4xl font-bold tracking-tight">Get In Touch</h2>
+          <p class="mt-4 text-gray-600 dark:text-gray-300">
+            I'm open to new opportunities, interesting projects, or a chat about technology.
+          </p>
+
+          <div class="mt-8 space-y-4">
+            <a
+              v-for="item in contacts"
+              :key="item.label"
+              :href="item.href"
+              :target="item.external ? '_blank' : undefined"
+              :rel="item.external ? 'noopener' : undefined"
+              class="flex items-center gap-4 p-4 rounded-xl border bg-gray-50 border-gray-200 hover:border-blue-400 hover:translate-x-1 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-blue-500 transition-all duration-300"
+            >
+              <span
+                class="w-10 h-10 rounded-lg flex items-center justify-center bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" :d="item.icon" />
+                </svg>
+              </span>
+              <span>
+                <span
+                  class="block text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  >{{ item.label }}</span
+                >
+                <span class="block font-semibold">{{ item.value }}</span>
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <div
+          class="reveal relative overflow-hidden rounded-3xl p-8 sm:p-10 shadow-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-blue-950 text-white"
+        >
+          <img
+            src="../assets/images/kbach_kh.png"
+            alt=""
+            class="absolute -bottom-6 -right-6 w-48 opacity-10 object-contain pointer-events-none"
+          />
+          <div class="relative">
+            <div class="text-4xl">❖</div>
+            <h3 class="mt-4 text-2xl sm:text-3xl font-bold">Let's build something together</h3>
+            <p class="mt-3 text-blue-100/90">
+              Whether it's a drone delivery system, an automation project, or a team to lead, I'd
+              love to hear from you.
+            </p>
+            <div class="mt-8 flex flex-col sm:flex-row gap-4">
+              <a
+                href="mailto:kimsrenghai@gmail.com"
+                class="inline-flex justify-center items-center px-6 py-3 rounded-xl bg-white text-blue-700 font-semibold hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300"
+              >
+                Email Me
+              </a>
+              <button
+                @click="saveContact"
+                class="inline-flex justify-center items-center gap-2 px-6 py-3 rounded-xl border border-white/40 font-semibold hover:bg-white/10 hover:-translate-y-0.5 transition-all duration-300"
+              >
+                Save Contact
+              </button>
             </div>
           </div>
         </div>
@@ -1887,47 +889,51 @@
     </section>
 
     <!-- Footer -->
-    <footer class="py-6 sm:py-8 transition-colors duration-300" :class="footerClasses">
-      <div class="container mx-auto px-4 sm:px-6">
-        <div class="flex flex-col md:flex-row justify-between items-center">
-          <div class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 md:mb-0">
-            <span :class="footerLogoPrimaryClasses">HAI</span>
-            <span :class="footerLogoSecondaryClasses"> KIMSRENG</span>
-          </div>
-          <div class="text-sm sm:text-base mb-3 sm:mb-4 md:mb-0" :class="footerTextClasses">
-            &copy; 2025 Portfolio. All rights reserved.
-          </div>
-          <div class="flex space-x-3 sm:space-x-4">
-            <!-- LinkedIn -->
-            <a
-              href="https://www.linkedin.com/in/hai-kim-sreng-a0527b274/"
-              target="_blank"
-              class="p-2 sm:p-3 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg"
-              :class="footerSocialIconClasses"
-              aria-label="LinkedIn Profile"
-            >
-              <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
-                />
-              </svg>
-            </a>
-
-            <!-- GitHub -->
-            <a
-              href="https://github.com/Kimsreng28"
-              target="_blank"
-              class="p-2 sm:p-3 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg"
-              :class="footerSocialIconClasses"
-              aria-label="GitHub Profile"
-            >
-              <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
-                />
-              </svg>
-            </a>
-          </div>
+    <footer class="py-8 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
+      <div
+        class="container mx-auto px-5 sm:px-7 flex flex-col md:flex-row items-center justify-between gap-5"
+      >
+        <div class="flex items-center gap-4">
+          <img src="../assets/images/logo_darkBlue.png" alt="DRDC" class="h-8 w-auto dark:hidden" />
+          <img
+            src="../assets/images/logo_white.png"
+            alt="DRDC"
+            class="hidden h-8 w-auto dark:block"
+          />
+          <span class="font-bold text-lg">
+            <span class="text-blue-600 dark:text-blue-400">HAI</span> KIMSRENG
+          </span>
+        </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          &copy; 2026 HAI KIMSRENG. All rights reserved.
+        </p>
+        <div class="flex gap-3">
+          <a
+            href="https://www.linkedin.com/in/hai-kim-sreng-a0527b274/"
+            target="_blank"
+            rel="noopener"
+            class="p-2.5 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-600 hover:text-white dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-blue-600 dark:hover:text-white hover:scale-110 transition-all duration-300"
+            aria-label="LinkedIn Profile"
+          >
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+              />
+            </svg>
+          </a>
+          <a
+            href="https://github.com/Kimsreng28"
+            target="_blank"
+            rel="noopener"
+            class="p-2.5 rounded-full bg-gray-100 text-gray-600 hover:bg-blue-600 hover:text-white dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-blue-600 dark:hover:text-white hover:scale-110 transition-all duration-300"
+            aria-label="GitHub Profile"
+          >
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+              />
+            </svg>
+          </a>
         </div>
       </div>
     </footer>
@@ -1935,842 +941,260 @@
 </template>
 
 <script>
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import profileImage from '../assets/images/Kimsreng.jpg'
+
+const ICONS = {
+  team: 'M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75',
+  server: 'M2 5h20v5H2zM2 14h20v5H2zM6 7.5h.01M6 16.5h.01',
+  drone:
+    'M12 12m-2 0a2 2 0 104 0 2 2 0 10-4 0M4 4l4 4M20 4l-4 4M4 20l4-4M20 20l-4-4M7 7a7 7 0 000 10M17 7a7 7 0 010 10',
+  code: 'M16 18l6-6-6-6M8 6l-6 6 6 6',
+  factory: 'M2 20V8l6 4V8l6 4V4h8v16z',
+  search: 'M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z',
+  calendar:
+    'M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z',
+  check: 'M22 11.08V12a10 10 0 11-5.93-9.14M22 4L12 14.01l-3-3',
+  location:
+    'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z',
+  mail: 'M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
+  phone:
+    'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z',
+  linkedin:
+    'M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2zM4 2a2 2 0 110 4 2 2 0 010-4z',
+  github:
+    'M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22',
+}
 
 export default {
   name: 'HomeView',
   data() {
     return {
-      mobileMenuOpen: false,
       darkMode: true,
-      navTransform: 'translateY(0)',
-      lastScrollTop: 0,
-      isNavbarScrolled: false,
       profileImage: profileImage,
-      profileImageLoaded: false,
-      quickStats: [
-        { number: '10+', label: 'Projects' },
-        { number: '2+', label: 'Years Experience' },
-        { number: '5+', label: 'Technologies' },
-      ],
-      experienceStats: [
-        { number: '2+', label: 'Years Experience' },
-        { number: '10+', label: 'Projects Completed' },
-        { number: '5+', label: 'Technologies' },
-      ],
+      mobileMenuOpen: false,
+      isScrolled: false,
+      scrollProgress: 0,
+      workflowIndex: 0,
+      workflowTimer: null,
+      activeProject: 0,
+      observer: null,
       navItems: [
+        { id: 'home', name: 'Home' },
+        { id: 'about', name: 'About' },
+        { id: 'experience', name: 'Experience' },
+        { id: 'workflow', name: 'Workflow' },
+        { id: 'projects', name: 'Projects' },
+        { id: 'skills', name: 'Skills' },
+        { id: 'contact', name: 'Contact' },
+      ],
+      heroStats: [
+        { value: '5', label: 'Projects' },
+        { value: '2+', label: 'Years Experience' },
+        { value: 'DRDC', label: 'Team Lead' },
+      ],
+      flowerPositions: [
+        { class: '-top-4 -left-4', rotation: '-12deg', delay: '0s' },
+        { class: '-top-4 -right-4', rotation: '12deg', delay: '0.5s' },
+        { class: 'top-[45%] -left-6', rotation: '12deg', delay: '1s' },
+        { class: 'top-[45%] -right-6', rotation: '-12deg', delay: '1.5s' },
+      ],
+      heroChips: [
+        { label: 'Drone Delivery', icon: ICONS.drone, class: 'top-0 left-0' },
+        { label: 'Industrial Automation', icon: ICONS.factory, class: 'top-4 right-0' },
+        { label: 'Server Management', icon: ICONS.server, class: 'top-[45%] -left-10' },
+        { label: 'Team Leadership', icon: ICONS.team, class: 'top-[45%] -right-10' },
+      ],
+      experience: [
         {
-          id: 'home',
-          name: 'Home',
-          icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
+          role: 'Team Lead',
+          org: 'DRDC',
+          period: 'Present',
+          current: true,
+          icon: ICONS.team,
+          bullets: [
+            'Lead and manage the development team',
+            'Server management for the team’s projects',
+            'Lead GCS Drone Delivery, DRDT and DRDC project work',
+            'Factory I/O and Bytefram projects',
+          ],
         },
         {
-          id: 'about',
-          name: 'About',
-          icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
-        },
-        {
-          id: 'experience',
-          name: 'Experience',
-          icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
-        },
-        {
-          id: 'projects',
-          name: 'Projects',
-          icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10',
-        },
-        {
-          id: 'education',
-          name: 'Education',
-          icon: 'M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5',
-        },
-        {
-          id: 'contact',
-          name: 'Contact',
-          icon: 'M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
+          role: 'Bachelor of Engineering in ICT',
+          org: 'Institute of Technology of Cambodia (ITC)',
+          period: '2021 – Present',
+          current: false,
+          icon: ICONS.calendar,
+          bullets: [
+            'Data structures, networking, databases, system administration and cloud computing',
+          ],
         },
       ],
-      mainTech: ['Laravel', 'Next.js', 'Nest.js', 'Flutter', 'PostgreSQL'],
-      techStack: [
+      workflowSteps: [
         {
-          name: 'Laravel',
-          logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Laravel.svg/1200px-Laravel.svg.png',
-          category: 'Backend',
+          num: '01',
+          name: 'Understand the Problem',
+          icon: ICONS.search,
+          description:
+            'Clarify what the team needs to deliver and why, before any code is written.',
         },
         {
-          name: 'Next.js',
-          logo: 'https://logo.svgcdn.com/devicon/nextjs-original.png',
-          category: 'Frontend',
+          num: '02',
+          name: 'Plan the Work',
+          icon: ICONS.calendar,
+          description: 'Break each project into tasks, priorities and milestones for the team.',
         },
         {
-          name: 'NestJS',
-          logo: 'https://nestjs.com/img/logo-small.svg',
-          category: 'Backend',
+          num: '03',
+          name: 'Lead the Team',
+          icon: ICONS.team,
+          description: 'Assign tasks, guide the developers and keep communication clear.',
         },
         {
-          name: 'Node.js',
-          logo: 'https://www.nicepng.com/png/full/93-932207_js-on-light-background-node-js-logo-png.png',
-          category: 'Runtime',
+          num: '04',
+          name: 'Build & Integrate',
+          icon: ICONS.code,
+          description: 'Develop GCS Drone Delivery and other systems together with the team.',
         },
         {
-          name: 'Vue.js',
-          logo: 'https://vuejs.org/images/logo.png',
-          category: 'Frontend',
+          num: '05',
+          name: 'Manage Servers',
+          icon: ICONS.server,
+          description: 'Set up, monitor and maintain the servers the projects run on.',
         },
         {
-          name: 'React',
-          logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1200px-React-icon.svg.png',
-          category: 'Frontend',
-        },
-        {
-          name: 'Flutter',
-          logo: 'https://juststickers.in/wp-content/uploads/2019/01/flutter.png',
-          category: 'Mobile',
-        },
-        {
-          name: 'PostgreSQL',
-          logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png',
-          category: 'Database',
-        },
-        {
-          name: 'MySQL',
-          logo: 'https://www.mysql.com/common/logos/logo-mysql-170x115.png',
-          category: 'Database',
-        },
-        {
-          name: 'Redis',
-          logo: 'https://cdn.iconscout.com/icon/free/png-256/free-redis-icon-svg-download-png-1175103.png?f=webp',
-          category: 'Cache',
-        },
-        {
-          name: 'Docker',
-          logo: 'https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png',
-          category: 'DevOps',
-        },
-        {
-          name: 'Socket.IO',
-          logo: 'https://socket.io/images/logo.svg',
-          category: 'Real-time',
-        },
-        {
-          name: 'TypeScript',
-          logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Typescript_logo_2020.svg/1200px-Typescript_logo_2020.svg.png',
-          category: 'Language',
-        },
-        {
-          name: 'Tailwind',
-          logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Tailwind_CSS_Logo.svg/1200px-Tailwind_CSS_Logo.svg.png',
-          category: 'CSS',
-        },
-      ],
-      sliderAnimation: null,
-      coreCompetencies: [
-        { name: 'Full-Stack', items: ['Laravel', 'Nest.js', 'Next.js'] },
-        { name: 'Database', items: ['PostgreSQL', 'MySQL', 'Prisma'] },
-        { name: 'Real-Time', items: ['Socket.IO', 'WebSockets'] },
-        { name: 'Mobile', items: ['Flutter'] },
-        { name: 'Security', items: ['OAuth2', 'JWT', 'Resend'] },
-        { name: 'Payments', items: ['Stripe', 'KHQR Bakong'] },
-        { name: 'DevOps', items: ['Redis', 'CI/CD', 'Docker'] },
-        { name: 'UI/UX', items: ['Figma'] },
-      ],
-      experiences: [
-        {
-          title: 'Backend Developer – EasyEazy Application Project',
-          period: '2026 - Present',
-          description: 'Team/Real-World Project',
-          technologies: [
-            'Vendure',
-            'Nest.js',
-            'PostgreSQL',
-            'TypeScript',
-            'OAuth',
-            'FCM',
-            'Facebook',
-            'KHQR',
-          ],
-          details: [
-            'Built a full modern Easy Application using professional software architecture ',
-            'Designed and developed complete management platform with authentication, admin dashboards, and role-based permissions',
-            'Integrated Facebook Authentication, Google Authentication, and Native Authentication',
-            'Developed FCM for Notifications system for real-time alerts',
-            'Added multiple vendor with the own payment using KHQR pay ways, shipping, and delivery methods',
-          ],
-        },
-        {
-          title: 'Full-Stack Developer – E-Management Platform Project',
-          period: '2025 - 2026',
-          description: 'Personal/Academic Project',
-          technologies: [
-            'Laravel',
-            'Next.js',
-            'PostgreSQL',
-            'Redis',
-            'OAuth2',
-            'Telegram Bot API',
-            'Stripe',
-            'KHQR Bakong',
-          ],
-          details: [
-            'Built a full modern E-Management Platform from scratch using professional software architecture',
-            'Designed and developed complete management platform with authentication, admin dashboards, and role-based permissions',
-            'Integrated Redis for caching and performance optimization',
-            'Developed Telegram Bot notification system for real-time alerts',
-            'Added multiple payment methods including Stripe, KHQR Bakong, Cash on Delivery',
-            'Implemented Chat System for text, image, voice, and calls between users',
-          ],
-        },
-        {
-          title: 'Project Developer – Real-Time Quiz App (DICE)',
-          period: '2024',
-          description: 'Team/Academic Project',
-          technologies: ['Vue.js', 'Nest.js', 'Socket.IO', 'Flutter'],
-          details: [
-            'Developed real-time quiz platform for multiple students to join simultaneously',
-            'Built web version using Vue.js and mobile version using Flutter',
-            'Implemented socket communication for real-time synchronization',
-          ],
-        },
-        {
-          title: 'Project Developer – E-Commerce Platform',
-          period: '2024',
-          description: 'Team/Academic Project',
-          technologies: ['Next.js', 'Nest.js', 'MySQL', 'Go', 'OAuth'],
-          details: [
-            'Developed e-commerce platform for browsing products and checkout with multiple methods',
-            'Implemented multiple roles access (Admin, Vendor, Customer)',
-            'Integrated microservice file storage using Go',
-            'Designed responsive UI using Next.js for multiple devices',
-          ],
+          num: '06',
+          name: 'Deliver & Review',
+          icon: ICONS.check,
+          description: 'Review results, fix issues and deliver the finished work.',
         },
       ],
       projects: [
         {
-          id: 1,
-          name: 'Easy Eazy App',
-          year: '2026',
-          description:
-            'Complete app for sale the product buy multiple vendor, easy to buy for customer.',
-          technologies: [
-            'Vendure',
-            'Nest.js',
-            'PostgreSQL',
-            'TypeScript',
-            'OAuth',
-            'FCM',
-            'Facebook',
-            'KHQR',
-          ],
+          name: 'GCS Drone Delivery',
+          category: 'DRDC · Team Lead',
+          description: 'Ground control station for drone delivery operations, led by our team.',
+          tags: ['Drone Delivery', 'Ground Control Station', 'Team Lead'],
         },
         {
-          id: 2,
-          name: 'E-Management System',
-          year: '2025',
-          description:
-            'Complete management platform with payment integration, caching, and automation.',
-          technologies: ['Laravel', 'Next.js', 'PostgreSQL', 'Redis', 'Stripe'],
+          name: 'DRDT',
+          category: 'DRDC · Team Lead',
+          description: 'Project work for DRDT, led as Team Lead.',
+          tags: ['Team Lead', 'Project Delivery'],
         },
         {
-          id: 3,
-          name: 'Real-Time Quiz App',
-          year: '2024',
-          description: 'Web and mobile app with socket-based real-time communication.',
-          technologies: ['Vue.js', 'Nest.js', 'Socket.IO', 'Flutter'],
+          name: 'DRDC',
+          category: 'DRDC · Team Lead',
+          description: 'Project work for DRDC, led as Team Lead.',
+          tags: ['Team Lead', 'Project Delivery'],
         },
         {
-          id: 4,
-          name: 'E-Commerce Platform',
-          year: '2024',
-          description: 'Full-featured e-commerce with multi-role access and microservices.',
-          technologies: ['Next.js', 'Nest.js', 'MySQL', 'Go', 'OAuth'],
+          name: 'Factory I/O',
+          category: 'Other Project',
+          description: 'Industrial automation simulation for factory scenarios.',
+          tags: ['Industrial Automation', 'Simulation'],
         },
         {
-          id: 5,
-          name: 'Java Swing Game',
-          year: '2023',
-          description: 'Desktop adventure game with OOP design and game logic.',
-          technologies: ['Java', 'Swing', 'OOP'],
+          name: 'Bytefram',
+          category: 'Other Project',
+          description: 'Project work led as Team Lead.',
+          tags: ['Team Lead'],
         },
       ],
-      educationYears: [
+      capabilities: [
         {
-          year: 'Foundation',
-          courses: ['Mathematics', 'Physics', 'History', 'French', 'Python'],
+          title: 'Team Leadership',
+          icon: ICONS.team,
+          items: ['Manage and lead the team', 'Teamwork & communication', 'Problem-solving'],
         },
         {
-          year: 'Year 2',
-          courses: ['Computer Architecture', 'Data Structures', 'Probability', 'C/C++'],
+          title: 'Server Management',
+          icon: ICONS.server,
+          items: ['Server management', 'Docker & Redis', 'CI/CD'],
         },
         {
-          year: 'Year 3',
-          courses: ['Algorithms', 'Networking', 'OOP with Java', 'Databases', 'Web Design'],
+          title: 'Drone Delivery',
+          icon: ICONS.drone,
+          items: ['GCS Drone Delivery', 'DRDT & DRDC projects'],
         },
         {
-          year: 'Year 4',
-          courses: [
-            'Network Design',
-            'System Administration',
-            'Vue & Next.js',
-            'NestJS',
-            'Laravel',
-            'Flutter',
-            'DevOps',
-          ],
+          title: 'Full-Stack Development',
+          icon: ICONS.code,
+          items: ['Laravel & Nest.js', 'Next.js & Vue.js', 'Flutter mobile'],
         },
-        {
-          year: 'Year 5',
-          courses: ['AI', 'NLP', 'Network Security', 'Cloud Computing AWS'],
-        },
+      ],
+      techGroups: [
+        { name: 'Backend', items: ['Laravel', 'NestJS', 'Node.js', 'Go'] },
+        { name: 'Frontend', items: ['Next.js', 'Vue.js', 'React', 'TypeScript', 'Tailwind'] },
+        { name: 'Mobile', items: ['Flutter'] },
+        { name: 'Data & DevOps', items: ['PostgreSQL', 'MySQL', 'Redis', 'Docker', 'Socket.IO'] },
+      ],
+      courses: [
+        'Data Structures',
+        'Networking',
+        'Databases',
+        'System Administration',
+        'Cloud Computing',
       ],
       languages: [
-        { name: 'Khmer', level: 'Native' },
-        { name: 'English', level: 'Fluent' },
-        { name: 'French', level: 'Basic' },
-      ],
-      technicalSkills: [
-        { name: 'Laravel', level: 90 },
-        { name: 'Next.js', level: 85 },
-        { name: 'Nest.js', level: 80 },
-        { name: 'Flutter', level: 75 },
-        { name: 'PostgreSQL', level: 85 },
-        { name: 'Vue.js', level: 80 },
+        { name: 'Khmer', level: 'Native', percent: 100 },
+        { name: 'English', level: 'Fluent', percent: 75 },
+        { name: 'French', level: 'Basic', percent: 35 },
       ],
       softSkills: [
         'Communication',
         'Teamwork',
         'Leadership',
         'Problem-Solving',
-        'Critical Thinking',
         'Time Management',
-        'Creativity',
         'Adaptability',
+      ],
+      contacts: [
+        {
+          label: 'Email',
+          value: 'kimsrenghai@gmail.com',
+          href: 'mailto:kimsrenghai@gmail.com',
+          icon: ICONS.mail,
+        },
+        { label: 'Phone', value: '069-376-706', href: 'tel:069376706', icon: ICONS.phone },
+        {
+          label: 'Location',
+          value: 'Phnom Penh, Cambodia',
+          href: 'https://maps.google.com/?q=Phnom+Penh',
+          external: true,
+          icon: ICONS.location,
+        },
+        {
+          label: 'LinkedIn',
+          value: 'hai-kim-sreng',
+          href: 'https://www.linkedin.com/in/hai-kim-sreng-a0527b274/',
+          external: true,
+          icon: ICONS.linkedin,
+        },
+        {
+          label: 'GitHub',
+          value: 'Kimsreng28',
+          href: 'https://github.com/Kimsreng28',
+          external: true,
+          icon: ICONS.github,
+        },
       ],
     }
   },
   computed: {
-    modeClasses() {
-      return this.darkMode ? 'dark bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'
+    currentProject() {
+      return this.projects[this.activeProject]
     },
-    textColor() {
-      return this.darkMode ? 'text-white' : 'text-gray-900'
+    projectNumber() {
+      return String(this.activeProject + 1).padStart(2, '0')
     },
-    navClasses() {
-      if (this.isNavbarScrolled) {
-        return this.darkMode
-          ? 'bg-gray-900/95 backdrop-blur-lg border-gray-800/50 shadow-xl'
-          : 'bg-white/95 backdrop-blur-lg border-gray-200/50 shadow-xl'
-      }
-      return this.darkMode
-        ? 'bg-transparent backdrop-blur-lg border-transparent'
-        : 'bg-transparent backdrop-blur-lg border-transparent'
+    railWidth() {
+      return (this.workflowIndex / (this.workflowSteps.length - 1)) * 100 + '%'
     },
-    logoClasses() {
-      return this.darkMode
-        ? 'bg-gradient-to-br from-blue-500 to-blue-700 text-white'
-        : 'bg-gradient-to-br from-blue-400 to-blue-600 text-white'
-    },
-    logoTextClasses() {
-      return this.darkMode
-        ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600'
-        : 'text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700'
-    },
-    navContainerClasses() {
-      return this.darkMode
-        ? 'bg-gray-800/50 border-gray-700/50'
-        : 'bg-gray-100/50 border-gray-300/50'
-    },
-    navLinkClasses() {
-      return this.darkMode ? 'hover:bg-gray-700/50' : 'hover:bg-gray-200/50'
-    },
-    navIconClasses() {
-      return this.darkMode
-        ? 'text-blue-400 group-hover:text-blue-300'
-        : 'text-blue-500 group-hover:text-blue-600'
-    },
-    navTextClasses() {
-      return this.darkMode
-        ? 'text-gray-300 group-hover:text-white'
-        : 'text-gray-600 group-hover:text-gray-900'
-    },
-    navIndicatorClasses() {
-      return this.darkMode
-        ? 'bg-gradient-to-r from-blue-400 to-blue-600'
-        : 'bg-gradient-to-r from-blue-500 to-blue-700'
-    },
-    themeToggleClasses() {
-      return this.darkMode
-        ? 'bg-gray-800/80 hover:bg-gray-700/80 border-gray-700/50'
-        : 'bg-gray-100/80 hover:bg-gray-200/80 border-gray-300/50'
-    },
-    mobileMenuButtonClasses() {
-      return this.darkMode
-        ? 'bg-gray-800/80 hover:bg-gray-700/80 border-gray-700/50'
-        : 'bg-gray-100/80 hover:bg-gray-200/80 border-gray-300/50'
-    },
-    mobileMenuLineClasses() {
-      return this.darkMode
-        ? 'bg-gradient-to-r from-blue-400 to-blue-300'
-        : 'bg-gradient-to-r from-blue-500 to-blue-600'
-    },
-    mobileMenuClasses() {
-      return this.darkMode ? 'bg-gray-800/95 border-gray-700/50' : 'bg-white/95 border-gray-200/50'
-    },
-    mobileNavLinkClasses() {
-      return this.darkMode ? 'hover:bg-gray-700/50' : 'hover:bg-gray-100/50'
-    },
-    mobileNavIconContainerClasses() {
-      return this.darkMode
-        ? 'bg-gray-900/50 group-hover:bg-gradient-to-br from-blue-900/30 to-blue-700/30'
-        : 'bg-gray-100/50 group-hover:bg-gradient-to-br from-blue-100/50 to-blue-200/50'
-    },
-    mobileNavIconClasses() {
-      return this.darkMode
-        ? 'text-blue-400 group-hover:text-blue-300'
-        : 'text-blue-500 group-hover:text-blue-600'
-    },
-    mobileNavTextClasses() {
-      return this.darkMode
-        ? 'text-gray-300 group-hover:text-white'
-        : 'text-gray-600 group-hover:text-gray-900'
-    },
-    mobileNavArrowClasses() {
-      return this.darkMode
-        ? 'text-gray-500 group-hover:text-blue-400'
-        : 'text-gray-400 group-hover:text-blue-500'
-    },
-    mobileMenuFooterClasses() {
-      return this.darkMode ? 'border-gray-700/50' : 'border-gray-300/50'
-    },
-    socialIconClasses() {
-      return this.darkMode
-        ? 'bg-gray-900/50 hover:bg-gray-700/50'
-        : 'bg-gray-100/50 hover:bg-gray-200/50'
-    },
-    socialIconSvgClasses() {
-      return this.darkMode ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-900'
-    },
-    heroBgCircle1() {
-      return this.darkMode ? 'bg-blue-500' : 'bg-blue-300'
-    },
-    heroBgCircle2() {
-      return this.darkMode ? 'bg-blue-700' : 'bg-blue-400'
-    },
-    heroBgCircle3() {
-      return this.darkMode ? 'bg-blue-400' : 'bg-blue-200'
-    },
-    heroBadgeClasses() {
-      return this.darkMode ? 'bg-blue-600/20' : 'bg-blue-100/50'
-    },
-    heroBadgeTextClasses() {
-      return this.darkMode ? 'text-blue-400' : 'text-blue-600'
-    },
-    heroTitleClasses() {
-      return this.darkMode
-        ? 'text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-600'
-        : 'text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700'
-    },
-    heroSubtitleClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-600'
-    },
-    heroSubtitleSpan1() {
-      return this.darkMode ? 'text-blue-300' : 'text-blue-500'
-    },
-    heroSubtitleSpan2() {
-      return this.darkMode ? 'text-blue-200' : 'text-blue-400'
-    },
-    heroTextClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-600'
-    },
-    quickStatsClasses() {
-      return this.darkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white/50 border-gray-300'
-    },
-    quickStatsNumberClasses() {
-      return this.darkMode
-        ? 'text-blue-400 font-bold text-xl sm:text-2xl'
-        : 'text-blue-500 font-bold text-xl sm:text-2xl'
-    },
-    quickStatsLabelClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-600'
-    },
-    techStackTitleClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-700'
-    },
-    techStackItemClasses() {
-      return this.darkMode
-        ? 'bg-gray-800/70 hover:bg-blue-900/30 border-gray-700 hover:border-blue-500'
-        : 'bg-gray-100/70 hover:bg-blue-100/50 border-gray-300 hover:border-blue-400'
-    },
-    techStackTextClasses() {
-      return this.darkMode
-        ? 'text-gray-300 group-hover:text-blue-300'
-        : 'text-gray-700 group-hover:text-blue-600'
-    },
-    ctaButtonPrimaryClasses() {
-      return this.darkMode
-        ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white'
-        : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white'
-    },
-    ctaButtonSecondaryClasses() {
-      return this.darkMode
-        ? 'bg-gray-800/70 hover:bg-gray-700/70 border-gray-700 hover:border-gray-600 text-gray-300'
-        : 'bg-gray-100/70 hover:bg-gray-200/70 border-gray-300 hover:border-gray-400 text-gray-700'
-    },
-    ctaButtonTertiaryClasses() {
-      return this.darkMode
-        ? 'bg-gray-800/30 hover:bg-gray-700/50 border-gray-700/50 hover:border-gray-600/70 text-gray-300'
-        : 'bg-gray-100/30 hover:bg-gray-200/50 border-gray-300/50 hover:border-gray-400/70 text-gray-700'
-    },
-    profileRingClasses() {
-      return this.darkMode
-        ? 'bg-gradient-to-r from-blue-500 to-blue-700'
-        : 'bg-gradient-to-r from-blue-400 to-blue-600'
-    },
-    profileBgClasses() {
-      return this.darkMode
-        ? 'bg-gradient-to-br from-blue-900 via-gray-900 to-blue-950'
-        : 'bg-gradient-to-br from-blue-50 via-gray-50 to-blue-100'
-    },
-    profileFallbackClasses() {
-      return this.darkMode
-        ? 'bg-gradient-to-br from-blue-800 to-blue-900'
-        : 'bg-gradient-to-br from-blue-100 to-blue-200'
-    },
-    profileInitialsClasses() {
-      return this.darkMode ? 'text-white opacity-80' : 'text-blue-900 opacity-80'
-    },
-    profileTitleClasses() {
-      return this.darkMode ? 'text-blue-200' : 'text-blue-700'
-    },
-    floatingBadgeClasses() {
-      return this.darkMode ? 'bg-blue-600' : 'bg-blue-500'
-    },
-    infoCardClasses() {
-      return this.darkMode ? 'bg-gray-800/80 border-gray-700/50' : 'bg-white/80 border-gray-300/50'
-    },
-    infoCardTitleClasses() {
-      return this.darkMode ? 'text-white' : 'text-gray-900'
-    },
-    infoCardSubtitleClasses() {
-      return this.darkMode ? 'text-blue-300' : 'text-blue-500'
-    },
-    infoCardIconClasses() {
-      return this.darkMode
-        ? 'bg-gradient-to-r from-blue-600 to-blue-800'
-        : 'bg-gradient-to-r from-blue-500 to-blue-700'
-    },
-    infoCardTextClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-600'
-    },
-    infoCardBorderClasses() {
-      return this.darkMode ? 'border-gray-700/50' : 'border-gray-300/50'
-    },
-    infoCardLinkClasses() {
-      return this.darkMode
-        ? 'text-blue-400 hover:text-blue-300'
-        : 'text-blue-500 hover:text-blue-600'
-    },
-    infoCardDividerClasses() {
-      return this.darkMode ? 'text-gray-600' : 'text-gray-400'
-    },
-    profileDeco1() {
-      return this.darkMode ? 'bg-blue-500' : 'bg-blue-300'
-    },
-    profileDeco2() {
-      return this.darkMode ? 'bg-blue-700' : 'bg-blue-400'
-    },
-    scrollIndicatorClasses() {
-      return this.darkMode
-        ? 'text-gray-400 hover:text-blue-400'
-        : 'text-gray-500 hover:text-blue-500'
-    },
-    techSliderClasses() {
-      return this.darkMode ? 'bg-gray-800/50' : 'bg-gray-100/50'
-    },
-    sectionIconClasses() {
-      return this.darkMode
-        ? 'bg-gradient-to-r from-blue-500 to-blue-600'
-        : 'bg-gradient-to-r from-blue-400 to-blue-500'
-    },
-    sectionTitleClasses() {
-      return this.darkMode ? 'text-white' : 'text-gray-900'
-    },
-    sectionSubtitleClasses() {
-      return this.darkMode ? 'text-gray-400' : 'text-gray-600'
-    },
-    techSliderGradientLeft() {
-      return this.darkMode
-        ? 'bg-gradient-to-r from-gray-800 to-transparent'
-        : 'bg-gradient-to-r from-gray-100 to-transparent'
-    },
-    techSliderGradientRight() {
-      return this.darkMode
-        ? 'bg-gradient-to-l from-gray-800 to-transparent'
-        : 'bg-gradient-to-l from-gray-100 to-transparent'
-    },
-    techCardClasses() {
-      return this.darkMode
-        ? 'bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 group-hover:border-blue-500/50 group-hover:shadow-blue-500/10'
-        : 'bg-gradient-to-br from-gray-50 to-white border-gray-300 group-hover:border-blue-400/50 group-hover:shadow-blue-400/10'
-    },
-    techNameClasses() {
-      return this.darkMode
-        ? 'text-white group-hover:text-blue-300'
-        : 'text-gray-900 group-hover:text-blue-600'
-    },
-    aboutSectionClasses() {
-      return this.darkMode ? 'bg-gray-800' : 'bg-gray-100'
-    },
-    sectionUnderlineClasses() {
-      return this.darkMode
-        ? 'bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600'
-        : 'bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700'
-    },
-    sectionUnderlineDotClasses() {
-      return this.darkMode ? 'bg-blue-400' : 'bg-blue-500'
-    },
-    aboutTextClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-600'
-    },
-    experienceStatClasses() {
-      return this.darkMode ? 'bg-gray-700' : 'bg-gray-200'
-    },
-    experienceStatNumberClasses() {
-      return this.darkMode ? 'text-blue-400' : 'text-blue-500'
-    },
-    experienceStatLabelClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-600'
-    },
-    competenciesTitleClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-700'
-    },
-    competencyCardClasses() {
-      return this.darkMode ? 'bg-gray-900' : 'bg-white'
-    },
-    competencyNameClasses() {
-      return this.darkMode ? 'text-blue-400' : 'text-blue-500'
-    },
-    competencyItemsClasses() {
-      return this.darkMode ? 'text-gray-400' : 'text-gray-600'
-    },
-    experienceSectionClasses() {
-      return this.darkMode ? 'bg-gray-900' : 'bg-gray-50'
-    },
-    experienceCardClasses() {
-      return this.darkMode ? 'bg-gray-800' : 'bg-white'
-    },
-    experienceTitleClasses() {
-      return this.darkMode ? 'text-blue-400' : 'text-blue-500'
-    },
-    experiencePeriodClasses() {
-      return this.darkMode ? 'text-gray-400' : 'text-gray-500'
-    },
-    experienceDescriptionClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-600'
-    },
-    experienceTechClasses() {
-      return this.darkMode ? 'bg-blue-900/50 text-blue-300' : 'bg-blue-100 text-blue-700'
-    },
-    experienceDetailDotClasses() {
-      return this.darkMode ? 'text-blue-500' : 'text-blue-600'
-    },
-    experienceDetailTextClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-600'
-    },
-    projectsSectionClasses() {
-      return this.darkMode ? 'bg-gray-800' : 'bg-gray-100'
-    },
-    projectCardClasses() {
-      return this.darkMode ? 'bg-gray-900' : 'bg-white'
-    },
-    projectTitleClasses() {
-      return this.darkMode ? 'text-blue-400' : 'text-blue-500'
-    },
-    projectYearClasses() {
-      return this.darkMode ? 'text-gray-400' : 'text-gray-500'
-    },
-    projectDescriptionClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-600'
-    },
-    projectTechClasses() {
-      return this.darkMode ? 'bg-gray-800 text-blue-300' : 'bg-gray-100 text-blue-600'
-    },
-    educationSectionClasses() {
-      return this.darkMode ? 'bg-gray-900' : 'bg-gray-50'
-    },
-    educationContentClasses() {
-      return this.darkMode ? 'bg-gray-800' : 'bg-white'
-    },
-    educationDegreeClasses() {
-      return this.darkMode ? 'text-blue-400' : 'text-blue-500'
-    },
-    educationInstitutionClasses() {
-      return this.darkMode ? 'text-gray-400' : 'text-gray-600'
-    },
-    educationYearCardClasses() {
-      return this.darkMode ? 'bg-gray-900' : 'bg-gray-100'
-    },
-    educationYearTitleClasses() {
-      return this.darkMode ? 'text-blue-300' : 'text-blue-600'
-    },
-    educationCourseClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-600'
-    },
-    certificationTitleClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-700'
-    },
-    certificationCardClasses() {
-      return this.darkMode ? 'bg-gray-900' : 'bg-gray-100'
-    },
-    certificationNameClasses() {
-      return this.darkMode ? 'text-blue-400' : 'text-blue-500'
-    },
-    certificationDescriptionClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-600'
-    },
-    contactSectionClasses() {
-      return this.darkMode ? 'bg-gray-800' : 'bg-gray-100'
-    },
-    contactTitleClasses() {
-      return this.darkMode ? 'text-white' : 'text-gray-900'
-    },
-    contactTextClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-600'
-    },
-    contactIconClasses() {
-      return this.darkMode ? 'bg-blue-600' : 'bg-blue-500'
-    },
-    contactLabelClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-700'
-    },
-    contactValueClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-600'
-    },
-    languagesTitleClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-700'
-    },
-    languageCardClasses() {
-      return this.darkMode ? 'bg-gray-900' : 'bg-white'
-    },
-    languageNameClasses() {
-      return this.darkMode ? 'text-blue-400' : 'text-blue-500'
-    },
-    languageLevelClasses() {
-      return this.darkMode ? 'text-gray-400' : 'text-gray-600'
-    },
-    skillsTitleClasses() {
-      return this.darkMode ? 'text-white' : 'text-gray-900'
-    },
-    technicalSkillsTitleClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-700'
-    },
-    technicalSkillCardClasses() {
-      return this.darkMode ? 'bg-gray-900' : 'bg-white'
-    },
-    skillNameClasses() {
-      return this.darkMode ? 'text-blue-400' : 'text-blue-500'
-    },
-    skillBarClasses() {
-      return this.darkMode ? 'bg-blue-600' : 'bg-blue-500'
-    },
-    softSkillsTitleClasses() {
-      return this.darkMode ? 'text-gray-300' : 'text-gray-700'
-    },
-    softSkillTagClasses() {
-      return this.darkMode ? 'bg-blue-900/50 text-blue-300' : 'bg-blue-100 text-blue-700'
-    },
-    footerClasses() {
-      return this.darkMode ? 'bg-gray-900' : 'bg-gray-800'
-    },
-    footerLogoPrimaryClasses() {
-      return this.darkMode ? 'text-blue-500' : 'text-blue-400'
-    },
-    footerLogoSecondaryClasses() {
-      return this.darkMode ? 'text-white' : 'text-gray-100'
-    },
-    footerTextClasses() {
-      return this.darkMode ? 'text-gray-400' : 'text-gray-300'
-    },
-    footerSocialIconClasses() {
-      return this.darkMode
-        ? 'bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white'
-        : 'bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white'
+    techCount() {
+      return this.techGroups.reduce((total, group) => total + group.items.length, 0)
     },
   },
   methods: {
-    getTechLogo(techName) {
-      const techMap = {
-        Laravel:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Laravel.svg/1200px-Laravel.svg.png',
-        'Next.js': 'https://logo.svgcdn.com/devicon/nextjs-original.png',
-        'Nest.js': 'https://nestjs.com/img/logo-small.svg',
-        Flutter: 'https://juststickers.in/wp-content/uploads/2019/01/flutter.png',
-        PostgreSQL:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png',
-        'Vue.js': 'https://vuejs.org/images/logo.png',
-      }
-      return techMap[techName] || ''
-    },
-
-    getSkillColor(skillName) {
-      const colorMap = {
-        Laravel: 'bg-red-500 dark:bg-red-600',
-        'Next.js': 'bg-black dark:bg-gray-800',
-        'Nest.js': 'bg-pink-500 dark:bg-pink-600',
-        Flutter: 'bg-blue-500 dark:bg-blue-600',
-        PostgreSQL: 'bg-indigo-500 dark:bg-indigo-600',
-        'Vue.js': 'bg-green-500 dark:bg-green-600',
-      }
-      return colorMap[skillName] || 'bg-gray-500 dark:bg-gray-600'
-    },
-
-    getSkillTextColor(skillName) {
-      const colorMap = {
-        Laravel: 'text-red-600 dark:text-red-400',
-        'Next.js': 'text-black dark:text-gray-300',
-        'Nest.js': 'text-pink-600 dark:text-pink-400',
-        Flutter: 'text-blue-600 dark:text-blue-400',
-        PostgreSQL: 'text-indigo-600 dark:text-indigo-400',
-        'Vue.js': 'text-green-600 dark:text-green-400',
-      }
-      return colorMap[skillName] || 'text-gray-600 dark:text-gray-400'
-    },
-    getLanguageLogo(langName) {
-      const langMap = {
-        Khmer: 'https://flagcdn.com/kh.svg',
-        English: 'https://flagcdn.com/us.svg',
-        French: 'https://flagcdn.com/fr.svg',
-      }
-      return langMap[langName] || '' // ADD THIS RETURN STATEMENT
-    },
-    getTechLogo(techName) {
-      const techMap = {
-        Laravel:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Laravel.svg/1200px-Laravel.svg.png',
-        'Next.js': 'https://logo.svgcdn.com/devicon/nextjs-original.png',
-        'Nest.js': 'https://nestjs.com/img/logo-small.svg',
-        Flutter: 'https://juststickers.in/wp-content/uploads/2019/01/flutter.png',
-        PostgreSQL:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Postgresql_elephant.svg/1200px-Postgresql_elephant.svg.png',
-        'Vue.js': 'https://vuejs.org/images/logo.png',
-        React:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1200px-React-icon.svg.png',
-        'Node.js':
-          'https://www.nicepng.com/png/full/93-932207_js-on-light-background-node-js-logo-png.png',
-        MySQL: 'https://www.mysql.com/common/logos/logo-mysql-170x115.png',
-        Redis:
-          'https://cdn.iconscout.com/icon/free/png-256/free-redis-icon-svg-download-png-1175103.png?f=webp',
-        Docker: 'https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png',
-        'Socket.IO': 'https://socket.io/images/logo.svg',
-        TypeScript:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Typescript_logo_2020.svg/1200px-Typescript_logo_2020.svg.png',
-        Tailwind:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Tailwind_CSS_Logo.svg/1200px-Tailwind_CSS_Logo.svg.png',
-      }
-
-      return techMap[techName] || ''
-    },
     toggleTheme() {
       this.darkMode = !this.darkMode
       if (this.darkMode) {
@@ -2780,6 +1204,7 @@ export default {
       }
     },
     scrollTo(sectionId) {
+      this.mobileMenuOpen = false
       const element = document.getElementById(sectionId)
       if (element) {
         window.scrollTo({
@@ -2788,183 +1213,47 @@ export default {
         })
       }
     },
-    scrollToAndCloseMenu(sectionId) {
-      this.scrollTo(sectionId)
-      this.mobileMenuOpen = false
-    },
     handleScroll() {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-
-      // Update navbar scrolled state
-      this.isNavbarScrolled = scrollTop > 50
-
-      // Handle hide/show on scroll
-      if (scrollTop > 100) {
-        if (scrollTop > this.lastScrollTop) {
-          // Scrolling down - hide navbar
-          this.navTransform = 'translateY(-100%)'
-        } else {
-          // Scrolling up - show navbar
-          this.navTransform = 'translateY(0)'
-        }
-      } else {
-        this.navTransform = 'translateY(0)'
-      }
-
-      this.lastScrollTop = scrollTop
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+      this.isScrolled = scrollTop > 50
+      this.scrollProgress = maxScroll > 0 ? scrollTop / maxScroll : 0
     },
-    initHeroAnimation() {
-      gsap.fromTo(
-        this.$refs.leftContent,
-        { opacity: 0, y: 50 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1.2,
-          ease: 'power3.out',
-          delay: 0.3,
-        },
-      )
-
-      gsap.fromTo(
-        this.$refs.rightContent,
-        { opacity: 0, y: 50, scale: 0.95 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 1.2,
-          ease: 'power3.out',
-          delay: 0.6,
-        },
-      )
-
-      if (this.$refs.scrollIndicator) {
-        gsap.fromTo(
-          this.$refs.scrollIndicator,
-          { opacity: 0 },
-          {
-            opacity: 1,
-            duration: 1,
-            delay: 1.5,
-          },
-        )
-      }
+    selectStep(index) {
+      this.workflowIndex = index
+      clearInterval(this.workflowTimer)
     },
-    initScrollAnimations() {
-      gsap.registerPlugin(ScrollTrigger)
+    prevProject() {
+      const total = this.projects.length
+      this.activeProject = (this.activeProject - 1 + total) % total
+    },
+    nextProject() {
+      this.activeProject = (this.activeProject + 1) % this.projects.length
+    },
+    saveContact() {
+      const vcard = [
+        'BEGIN:VCARD',
+        'VERSION:3.0',
+        'N:;HAI KIMSRENG;;;',
+        'FN:HAI KIMSRENG',
+        'ORG:DRDC',
+        'TITLE:Full Stack Developer',
+        'TEL;TYPE=CELL:069-376-706',
+        'EMAIL:kimsrenghai@gmail.com',
+        'ADR;TYPE=WORK:;;Phnom Penh;;;;Cambodia',
+        'URL:https://github.com/Kimsreng28',
+        'END:VCARD',
+      ].join('\r\n')
 
-      this.$nextTick(() => {
-        const sectionTitles = [
-          this.$refs.aboutTitle,
-          this.$refs.experienceTitle,
-          this.$refs.projectsTitle,
-          this.$refs.educationTitle,
-          this.$refs.contactTitle,
-        ]
-
-        sectionTitles.forEach((title) => {
-          if (title) {
-            gsap.fromTo(
-              title,
-              { opacity: 0, y: 30 },
-              {
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                scrollTrigger: {
-                  trigger: title,
-                  start: 'top 80%',
-                  once: true,
-                },
-              },
-            )
-          }
-        })
-
-        const contentSections = [
-          { element: this.$refs.aboutLeft, delay: 0 },
-          { element: this.$refs.aboutRight, delay: 0.2 },
-          { element: this.$refs.educationContent, delay: 0 },
-          { element: this.$refs.contactLeft, delay: 0 },
-          { element: this.$refs.contactRight, delay: 0.2 },
-        ]
-
-        contentSections.forEach((section) => {
-          if (section.element) {
-            gsap.fromTo(
-              section.element,
-              { opacity: 0, y: 30 },
-              {
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                delay: section.delay,
-                scrollTrigger: {
-                  trigger: section.element,
-                  start: 'top 75%',
-                  once: true,
-                },
-              },
-            )
-          }
-        })
-
-        this.experiences.forEach((_, index) => {
-          if (this.$refs[`exp-${index}`]) {
-            const element = this.$refs[`exp-${index}`][0]
-            if (element) {
-              gsap.fromTo(
-                element,
-                { opacity: 0, y: 30 },
-                {
-                  opacity: 1,
-                  y: 0,
-                  duration: 0.8,
-                  delay: index * 0.1,
-                  scrollTrigger: {
-                    trigger: element,
-                    start: 'top 75%',
-                    once: true,
-                  },
-                },
-              )
-            }
-          }
-        })
-
-        this.projects.forEach((project, index) => {
-          if (this.$refs[`project-${project.id}`]) {
-            const element = this.$refs[`project-${project.id}`][0]
-            if (element) {
-              gsap.fromTo(
-                element,
-                { opacity: 0, y: 30, scale: 0.95 },
-                {
-                  opacity: 1,
-                  y: 0,
-                  scale: 1,
-                  duration: 0.8,
-                  delay: index * 0.1,
-                  scrollTrigger: {
-                    trigger: element,
-                    start: 'top 75%',
-                    once: true,
-                  },
-                },
-              )
-            }
-          }
-        })
-
-        setTimeout(() => {
-          ScrollTrigger.refresh()
-        }, 1000)
-      })
+      const url = URL.createObjectURL(new Blob([vcard], { type: 'text/vcard' }))
+      const link = document.createElement('a')
+      link.href = url
+      link.download = 'HAI_KIMSRENG.vcf'
+      link.click()
+      URL.revokeObjectURL(url)
     },
   },
   mounted() {
-    // Set initial theme based on system preference
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       this.darkMode = true
       document.documentElement.classList.add('dark')
@@ -2973,267 +1262,163 @@ export default {
       document.documentElement.classList.remove('dark')
     }
 
-    // Add scroll event listener
     window.addEventListener('scroll', this.handleScroll)
+    this.handleScroll()
 
-    const img = new Image()
-    img.src = this.profileImage
-    img.onload = () => {
-      this.profileImageLoaded = true
-    }
-    img.onerror = () => {
-      this.profileImageLoaded = false
-      console.error('Failed to preload profile image at:', this.profileImage)
-    }
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in')
+            this.observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.15 },
+    )
+    document.querySelectorAll('.reveal').forEach((el) => this.observer.observe(el))
 
-    this.$nextTick(() => {
-      this.initHeroAnimation()
-
-      setTimeout(() => {
-        this.initScrollAnimations()
-      }, 500)
-    })
-
-    window.addEventListener('resize', () => {
-      ScrollTrigger.refresh()
-    })
-
-    document.addEventListener('visibilitychange', () => {
-      if (this.sliderAnimation) {
-        if (document.hidden) {
-          this.sliderAnimation.pause()
-        } else {
-          this.sliderAnimation.play()
-        }
-      }
-    })
+    this.workflowTimer = setInterval(() => {
+      this.workflowIndex = (this.workflowIndex + 1) % this.workflowSteps.length
+    }, 3500)
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('scroll', this.handleScroll)
+    clearInterval(this.workflowTimer)
+    if (this.observer) this.observer.disconnect()
   },
 }
 </script>
 
 <style>
-/* Custom animations */
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease;
+}
+
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+.rise {
+  opacity: 0;
+  animation: rise 0.9s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+@keyframes rise {
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: none;
+  }
+  from {
+    opacity: 0;
+    transform: translateY(26px);
   }
 }
 
-.animate-spin-slow {
-  animation: spin-slow linear infinite;
+.pulse-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  margin: -100px 0 0 -100px;
+  border: 1.5px solid rgba(59, 130, 246, 0.3);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  animation: pulse-ring-anim 4.5s ease infinite;
 }
 
-/* Ensure proper spacing */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Mobile menu fix */
-@media (max-width: 768px) {
-  #home {
-    padding-top: 100px;
+@keyframes pulse-ring-anim {
+  0% {
+    opacity: 0.55;
+    transform: scale(0.55);
+  }
+  70% {
+    opacity: 0.12;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
   }
 }
 
-/* Profile image container fix */
-.relative .absolute.inset-0 {
+.orbit-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #60a5fa;
+  box-shadow: 0 0 9px rgba(96, 165, 250, 0.6);
+  transform-origin: 0 0;
+  pointer-events: none;
   z-index: 1;
 }
 
-.relative .absolute.inset-2 {
-  z-index: 2;
+.orbit-dot.small {
+  width: 5px;
+  height: 5px;
+  opacity: 0.75;
 }
 
-/* Title underline animation */
-@keyframes slideIn {
+@keyframes orbit-a {
   from {
-    width: 0;
+    transform: rotate(0) translate(var(--r));
   }
   to {
-    width: 6rem;
+    transform: rotate(1turn) translate(var(--r));
   }
 }
 
-.title-underline {
-  animation: slideIn 0.8s ease-out forwards;
+@keyframes orbit-b {
+  from {
+    transform: rotate(90deg) translate(var(--r));
+  }
+  to {
+    transform: rotate(450deg) translate(var(--r));
+  }
 }
 
-/* Section icon animation */
-@keyframes float {
+@keyframes float-stats {
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+  }
+  50% {
+    transform: translate(-50%, -12px);
+  }
+}
+
+.float-stats {
+  animation: float-stats 8s ease-in-out infinite;
+}
+
+@keyframes chip-float {
   0%,
   100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(-12px);
   }
 }
 
-.section-icon {
-  animation: float 3s ease-in-out infinite;
+.chip-float {
+  animation: chip-float 7s ease-in-out infinite;
 }
 
-/* Nav link hover effects */
-.nav-link:hover span:last-child {
-  width: 2rem;
+.khmer-flower {
+  animation: flower-float 3s ease-in-out infinite;
 }
 
-/* Mobile nav link animation */
-.mobile-nav-link {
-  animation: slideInRight 0.3s ease-out forwards;
-  animation-delay: calc(var(--i) * 0.05s);
-  opacity: 0;
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* Smooth transitions for navbar */
-nav {
-  transition: all 0.3s ease;
-}
-
-/* Logo icon hover effect */
-nav .logo-icon {
-  transition: all 0.3s ease;
-}
-
-nav:hover .logo-icon {
-  transform: rotate(15deg);
-}
-
-/* Gradient text animation */
-.gradient-text {
-  background: linear-gradient(90deg, #60a5fa, #3b82f6, #1d4ed8);
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: gradient 3s linear infinite;
-}
-
-@keyframes gradient {
-  0% {
-    background-position: 0% center;
-  }
-  100% {
-    background-position: 200% center;
-  }
-}
-
-/* Custom infinite scroll animation */
-@keyframes infinite-scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-infinite-scroll {
-  animation: infinite-scroll 30s linear infinite;
-}
-
-/* Pause animation on hover */
-.flex.overflow-hidden:hover .animate-infinite-scroll {
-  animation-play-state: paused;
-}
-
-/* Smooth transition for items */
-.group {
-  transition: transform 0.3s ease;
-}
-
-.group:hover {
-  transform: translateY(-5px);
-}
-
-/* Optional: Add pulse animation to logos */
-@keyframes pulse-glow {
-  0%,
-  100% {
-    filter: brightness(100%);
-  }
-  50% {
-    filter: brightness(120%);
-  }
-}
-
-.group:hover img {
-  animation: pulse-glow 1.5s ease-in-out infinite;
-}
-
-/* Responsive adjustments */
-@media (max-width: 640px) {
-  .animate-infinite-scroll {
-    animation-duration: 20s;
-  }
-
-  .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .animate-infinite-scroll {
-    animation-duration: 25s;
-  }
-
-  h1 {
-    font-size: 2.5rem;
-  }
-
-  h2 {
-    font-size: 2rem;
-  }
-}
-
-/* Print styles */
-@media print {
-  .no-print {
-    display: none;
-  }
-
-  body {
-    color: #000;
-    background: #fff;
-  }
-
-  a {
-    color: #000;
-    text-decoration: none;
-  }
-}
-
-@media (max-width: 475px) {
-  /* Extra small screen adjustments */
-  .text-lg {
-    font-size: 1.125rem;
-    line-height: 1.75rem;
-  }
-
-  .logo-icon {
-    width: 2rem;
-    height: 2rem;
-  }
-}
-/* Khmer flower floating animation */
 @keyframes flower-float {
   0%,
   100% {
@@ -3244,149 +1429,39 @@ nav:hover .logo-icon {
   }
 }
 
-.khmer-flower {
-  animation: flower-float 3s ease-in-out infinite;
+.animate-spin-slow {
+  animation: spin-slow 26s linear infinite;
 }
 
-/* Khmer border rotation animation */
-@keyframes khmer-pattern-rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+.animate-spin-slow-reverse {
+  animation: spin-slow 19s linear infinite reverse;
 }
 
-.khmer-border {
-  animation: khmer-pattern-rotate 20s linear infinite;
-}
-
-/* Badge floating animation */
-@keyframes badge-float {
-  0%,
-  100% {
-    transform: translateY(0) rotate(var(--badge-rotation, 0deg));
-  }
-  50% {
-    transform: translateY(-3px) rotate(var(--badge-rotation, 0deg));
+@keyframes spin-slow {
+  to {
+    transform: rotate(1turn);
   }
 }
 
-.badge-float {
-  --badge-rotation: 0deg;
-  animation: badge-float 4s ease-in-out infinite;
-}
-
-.badge-float:nth-child(1) {
-  --badge-rotation: 6deg;
-}
-
-.badge-float:nth-child(2) {
-  --badge-rotation: -6deg;
-}
-
-.badge-dot {
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .rise {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
   }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.1);
+
+  .orbit-dot,
+  .pulse-ring,
+  .float-stats,
+  .chip-float,
+  .khmer-flower {
+    animation: none !important;
   }
 }
 
-/* Corner element animation */
-@keyframes corner-glow {
-  0%,
-  100% {
-    opacity: 0.8;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.corner-decoration {
-  animation: corner-glow 2s ease-in-out infinite;
-}
-
-/* Pulse animation for decorative elements */
-@keyframes horizontal-pulse {
-  0%,
-  100% {
-    transform: scaleX(1);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scaleX(1.2);
-    opacity: 1;
-  }
-}
-
-.pulse-element {
-  animation: horizontal-pulse 3s ease-in-out infinite;
-}
-
-/* Profile image container glow effect */
-@keyframes profile-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 20px rgba(217, 119, 6, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(217, 119, 6, 0.5);
-  }
-}
-
-/* Add this class to the main container if you want glow effect */
-.profile-glow {
-  animation: profile-glow 4s ease-in-out infinite;
-}
-
-/* Star animation */
-@keyframes star-twinkle {
-  0%,
-  100% {
-    opacity: 0.7;
-    transform: scale(1) rotate(0deg);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.2) rotate(180deg);
-  }
-}
-
-.star-decoration {
-  animation: star-twinkle 3s ease-in-out infinite;
-}
-
-/* Optional: Add more stars in diagonal positions */
-@keyframes star-drift {
-  0% {
-    transform: translate(0, 0) rotate(0deg);
-  }
-  25% {
-    transform: translate(2px, -2px) rotate(90deg);
-  }
-  50% {
-    transform: translate(0, 0) rotate(180deg);
-  }
-  75% {
-    transform: translate(-2px, 2px) rotate(270deg);
-  }
-  100% {
-    transform: translate(0, 0) rotate(360deg);
-  }
-}
-
-.star-drift {
-  animation: star-drift 10s linear infinite;
+html {
+  scroll-behavior: smooth;
 }
 </style>
