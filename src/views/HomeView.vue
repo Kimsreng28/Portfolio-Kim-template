@@ -351,26 +351,35 @@
         </div>
 
         <div class="reveal grid gap-5">
-          <!-- Education -->
+          <!-- Current work -->
           <div
             class="p-6 rounded-2xl border-l-4 border-blue-500 bg-white border border-gray-200 dark:bg-gray-950 dark:border-gray-800 shadow-lg"
           >
-            <div
-              class="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400"
-            >
-              Education
+            <div class="flex items-center justify-between gap-3">
+              <div
+                class="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400"
+              >
+                Current Work
+              </div>
+              <span
+                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                Present
+              </span>
             </div>
-            <h3 class="mt-2 text-lg font-bold">Bachelor of Engineering in ICT</h3>
+            <h3 class="mt-2 text-lg font-bold">{{ currentWork.role }}</h3>
             <p class="text-sm text-gray-500 dark:text-gray-400">
-              Institute of Technology of Cambodia (ITC) · 2021 – Present
+              {{ currentWork.org }} · {{ currentWork.location }}
             </p>
+            <p class="mt-3 text-sm text-gray-600 dark:text-gray-300">{{ currentWork.summary }}</p>
             <div class="mt-4 flex flex-wrap gap-2">
               <span
-                v-for="course in courses"
-                :key="course"
+                v-for="tag in currentWork.tags"
+                :key="tag"
                 class="px-2.5 py-1 rounded-md text-xs bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
               >
-                {{ course }}
+                {{ tag }}
               </span>
             </div>
           </div>
@@ -1342,13 +1351,14 @@ export default {
         { name: 'Mobile', items: ['Flutter'] },
         { name: 'Data & DevOps', items: ['PostgreSQL', 'MySQL', 'Redis', 'Docker', 'Socket.IO'] },
       ],
-      courses: [
-        'Data Structures',
-        'Networking',
-        'Databases',
-        'System Administration',
-        'Cloud Computing',
-      ],
+      currentWork: {
+        role: 'Full Stack Developer',
+        org: 'DRDC',
+        location: 'Phnom Penh, Cambodia',
+        summary:
+          'Building GCS Drone Delivery and DRDT, and managing the servers these systems run on.',
+        tags: ['GCS Drone Delivery', 'DRDT', 'DRDC', 'Server Management', 'Docker'],
+      },
       languages: [
         { name: 'Khmer', level: 'Native', percent: 100 },
         { name: 'English', level: 'Fluent', percent: 75 },
