@@ -490,6 +490,15 @@
                     <span>{{ bullet }}</span>
                   </li>
                 </ul>
+                <div v-if="item.tags" class="mt-5 flex flex-wrap gap-2">
+                  <span
+                    v-for="tag in item.tags"
+                    :key="tag"
+                    class="px-2.5 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                  >
+                    {{ tag }}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -501,19 +510,44 @@
               class="absolute inset-0 rounded-full border border-blue-500/20 animate-spin-slow"
             ></div>
             <div
-              class="absolute inset-[14%] rounded-full border border-blue-500/15 animate-spin-slow-reverse"
+              class="absolute inset-[7%] rounded-full border border-blue-500/15 animate-spin-slow-reverse"
             ></div>
-            <div
-              class="absolute inset-[24%] rounded-full overflow-hidden bg-gradient-to-br from-blue-500 via-blue-700 to-blue-950 shadow-2xl flex items-center justify-center"
-            >
-              <img
-                src="../assets/images/kh_flower.png"
-                alt="Khmer flower"
-                class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay"
-              />
-              <span class="relative text-center text-white">
 
-              </span>
+            <!-- Photo -->
+            <div
+              class="absolute inset-[14%] rounded-full p-1.5 bg-gradient-to-br from-blue-400 via-blue-600 to-blue-800 shadow-2xl"
+            >
+              <div
+                class="relative w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-gray-900"
+              >
+                <img
+                  :src="experienceImage"
+                  alt="Software engineer at DRDC"
+                  class="w-full h-full object-cover"
+                />
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-blue-950/50 via-transparent to-transparent"
+                ></div>
+                <img
+                  src="../assets/images/kh_flower.png"
+                  alt=""
+                  class="absolute inset-0 w-full h-full object-cover opacity-10 mix-blend-overlay"
+                />
+              </div>
+            </div>
+
+            <!-- Floating badges -->
+            <div
+              class="chip-float absolute left-0 top-[16%] z-10 flex items-center gap-2 px-4 py-2.5 rounded-xl border shadow-xl bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700"
+            >
+              <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+              <span class="text-xs font-semibold">Software Engineer</span>
+            </div>
+            <div
+              class="chip-float absolute right-0 bottom-[14%] z-10 flex items-center gap-2 px-4 py-2.5 rounded-xl border shadow-xl bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700"
+              style="animation-delay: 0.8s"
+            >
+              <span class="text-xs font-semibold">Servers · Docker · Proxmox</span>
             </div>
           </div>
         </div>
@@ -621,7 +655,7 @@
             Work at DRDC &amp; Beyond
           </h2>
           <p class="mt-4 text-gray-600 dark:text-gray-300">
-            Drone delivery and team-led project work, plus automation and platform projects.
+            Drone delivery, automation and platform projects.
           </p>
         </div>
 
@@ -630,13 +664,27 @@
             class="relative aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-blue-500 via-blue-700 to-blue-950 flex items-center justify-center"
           >
             <img
-              src="../assets/images/kh_flower.png"
-              alt=""
-              class="absolute inset-0 w-full h-full object-cover opacity-25 mix-blend-overlay"
+              v-if="currentProjectImage"
+              :src="currentProjectImage"
+              :alt="currentProject.name"
+              class="absolute inset-0 w-full h-full object-cover"
             />
-            <span class="relative text-[120px] font-bold text-white/90 leading-none">{{
-              projectNumber
-            }}</span>
+            <template v-else>
+              <img
+                src="../assets/images/kh_flower.png"
+                alt=""
+                class="absolute inset-0 w-full h-full object-cover opacity-25 mix-blend-overlay"
+              />
+              <span class="relative text-[120px] font-bold text-white/90 leading-none">{{
+                projectNumber
+              }}</span>
+            </template>
+            <span
+              v-if="currentProjectImage"
+              class="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/50 backdrop-blur text-white text-xs font-mono"
+            >
+              {{ projectNumber }}
+            </span>
           </div>
 
           <div>
@@ -653,6 +701,16 @@
             <p class="mt-4 text-gray-600 dark:text-gray-300 leading-relaxed">
               {{ currentProject.description }}
             </p>
+            <ul class="mt-4 space-y-2">
+              <li
+                v-for="point in currentProject.highlights"
+                :key="point"
+                class="flex gap-2 text-sm text-gray-600 dark:text-gray-300"
+              >
+                <span class="text-blue-500 font-bold">›</span>
+                <span>{{ point }}</span>
+              </li>
+            </ul>
             <div class="mt-5 flex flex-wrap gap-2">
               <span
                 v-for="tag in currentProject.tags"
@@ -808,8 +866,8 @@
 
     <!-- Contact -->
     <section id="contact" class="py-20 sm:py-24">
-      <div class="container mx-auto px-5 sm:px-7 grid lg:grid-cols-2 gap-12 items-start">
-        <div class="reveal">
+      <div class="container mx-auto px-5 sm:px-7">
+        <div class="reveal max-w-2xl mx-auto text-center">
           <p
             class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-600 dark:text-blue-400"
           >
@@ -819,18 +877,22 @@
           <p class="mt-4 text-gray-600 dark:text-gray-300">
             I'm open to new opportunities, interesting projects, or a chat about technology.
           </p>
+        </div>
 
-          <div class="mt-8 space-y-4">
+        <div class="mt-12 grid lg:grid-cols-[1.1fr_0.9fr] gap-6 lg:gap-8 items-stretch">
+          <!-- Contact cards -->
+          <div class="reveal grid sm:grid-cols-2 gap-4">
             <a
               v-for="item in contacts"
               :key="item.label"
               :href="item.href"
               :target="item.external ? '_blank' : undefined"
               :rel="item.external ? 'noopener' : undefined"
-              class="flex items-center gap-4 p-4 rounded-xl border bg-gray-50 border-gray-200 hover:border-blue-400 hover:translate-x-1 dark:bg-gray-900 dark:border-gray-800 dark:hover:border-blue-500 transition-all duration-300"
+              class="group flex items-center gap-4 p-5 rounded-2xl border bg-gray-50 border-gray-200 hover:border-blue-400 hover:-translate-y-0.5 hover:shadow-lg dark:bg-gray-900 dark:border-gray-800 dark:hover:border-blue-500 transition-all duration-300"
+              :class="item.wide ? 'sm:col-span-2' : ''"
             >
               <span
-                class="w-10 h-10 rounded-lg flex items-center justify-center bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400"
+                class="w-11 h-11 shrink-0 rounded-xl flex items-center justify-center bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white dark:bg-blue-900/40 dark:text-blue-400 transition-colors duration-300"
               >
                 <svg
                   class="w-5 h-5"
@@ -842,42 +904,64 @@
                   <path stroke-linecap="round" stroke-linejoin="round" :d="item.icon" />
                 </svg>
               </span>
-              <span>
+              <span class="min-w-0 flex-1">
                 <span
-                  class="block text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400"
+                  class="block text-[11px] uppercase tracking-wider text-gray-500 dark:text-gray-400"
                   >{{ item.label }}</span
                 >
-                <span class="block font-semibold">{{ item.value }}</span>
+                <span class="block font-semibold truncate">{{ item.value }}</span>
               </span>
+              <svg
+                class="w-4 h-4 shrink-0 text-gray-400 group-hover:text-blue-500 transition-colors duration-300"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7 17L17 7M7 7h10v10" />
+              </svg>
             </a>
           </div>
-        </div>
 
-        <div
-          class="reveal relative overflow-hidden rounded-3xl p-8 sm:p-10 shadow-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-blue-950 text-white"
-        >
-          <img
-            src="../assets/images/kbach_kh.png"
-            alt=""
-            class="absolute -bottom-6 -right-6 w-48 opacity-10 object-contain pointer-events-none"
-          />
-          <div class="relative">
-            <div class="text-4xl">❖</div>
-            <h3 class="mt-4 text-2xl sm:text-3xl font-bold">Let's build something together</h3>
-            <p class="mt-3 text-blue-100/90">
-              Whether it's a drone delivery system, an automation project, or a team to lead, I'd
-              love to hear from you.
-            </p>
-            <div class="mt-8 flex flex-col sm:flex-row gap-4">
+          <!-- Call to action -->
+          <div
+            class="reveal relative overflow-hidden rounded-3xl p-8 sm:p-10 shadow-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-blue-950 text-white flex flex-col justify-between gap-10"
+          >
+            <img
+              src="../assets/images/kbach_kh.png"
+              alt=""
+              class="absolute -bottom-6 -right-6 w-48 opacity-10 object-contain pointer-events-none"
+            />
+            <div class="relative">
+              <span
+                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-semibold"
+              >
+                <span class="relative flex h-2 w-2">
+                  <span
+                    class="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping"
+                  ></span>
+                  <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
+                </span>
+                Available for opportunities
+              </span>
+              <h3 class="mt-6 text-2xl sm:text-3xl font-bold leading-tight">
+                Let's build something together
+              </h3>
+              <p class="mt-3 text-blue-100/90">
+                Whether it's a drone delivery system, an automation project or a new idea, I'd love
+                to hear from you.
+              </p>
+            </div>
+            <div class="relative flex flex-col sm:flex-row gap-3">
               <a
                 href="mailto:kimsrenghai@gmail.com"
-                class="inline-flex justify-center items-center px-6 py-3 rounded-xl bg-white text-blue-700 font-semibold hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300"
+                class="inline-flex h-12 flex-1 justify-center items-center rounded-xl border border-white bg-white px-6 text-blue-700 font-semibold hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300"
               >
                 Email Me
               </a>
               <button
                 @click="saveContact"
-                class="inline-flex justify-center items-center gap-2 px-6 py-3 rounded-xl border border-white/40 font-semibold hover:bg-white/10 hover:-translate-y-0.5 transition-all duration-300"
+                class="inline-flex h-12 flex-1 justify-center items-center gap-2 rounded-xl border border-white/40 px-6 font-semibold hover:bg-white/10 hover:-translate-y-0.5 transition-all duration-300"
               >
                 Save Contact
               </button>
@@ -941,6 +1025,23 @@
 
 <script>
 import profileImage from '../assets/images/Kimsreng.jpg'
+import flowerBanner from '../assets/images/flower_banner.jpg'
+
+// Optional photo for the "Impact" circle. Add src/assets/images/experience.jpg
+// (or .png / .webp) and it is picked up automatically. Until then the flower
+// banner is shown, so the build never fails on a missing file.
+const customExperience = import.meta.glob('../assets/images/experience.{jpg,jpeg,png,webp}', {
+  eager: true,
+  import: 'default',
+})
+const experienceImage = Object.values(customExperience)[0] || flowerBanner
+
+// Optional project screenshots. Add files to src/assets/images/projects/ named
+// after the project slug, e.g. gcs-drone-delivery.jpg, drdt.png, bytefarm.webp.
+const projectImages = import.meta.glob('../assets/images/projects/*.{jpg,jpeg,png,webp}', {
+  eager: true,
+  import: 'default',
+})
 
 const ICONS = {
   team: 'M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75',
@@ -970,6 +1071,7 @@ export default {
     return {
       darkMode: true,
       profileImage: profileImage,
+      experienceImage: experienceImage,
       mobileMenuOpen: false,
       isScrolled: false,
       scrollProgress: 0,
@@ -989,7 +1091,7 @@ export default {
       heroStats: [
         { value: '5', label: 'Projects' },
         { value: '2+', label: 'Years Experience' },
-        { value: 'DRDC', label: 'Team Lead' },
+        { value: '5+', label: 'Technologies' },
       ],
       flowerPositions: [
         { class: '-top-4 -left-4', rotation: '-12deg', delay: '0s' },
@@ -1001,21 +1103,101 @@ export default {
         { label: 'Drone Delivery', icon: ICONS.drone, class: 'top-0 left-0' },
         { label: 'Industrial Automation', icon: ICONS.factory, class: 'top-4 right-0' },
         { label: 'Server Management', icon: ICONS.server, class: 'top-[45%] -left-10' },
-        { label: 'Team Leadership', icon: ICONS.team, class: 'top-[45%] -right-10' },
+        { label: 'Full-Stack Development', icon: ICONS.code, class: 'top-[45%] -right-10' },
       ],
       experience: [
         {
-          role: 'Team Lead',
+          role: 'Team Lead, Full Stack Developer',
           org: 'DRDC',
           period: 'Present',
           current: true,
           icon: ICONS.team,
           bullets: [
-            'Lead and manage the development team',
-            'Server management for the team’s projects',
-            'Lead GCS Drone Delivery, DRDT and DRDC project work',
-            'Factory I/O and Bytefram projects',
+            'Lead the development team: plan work, assign tasks, review code and unblock developers.',
+            'Architect and build services for DRDT (DroneOps AI), a drone delivery and surveillance platform based on microservices.',
+            'Lead GCS Drone Delivery, the ground control station for drone delivery operations.',
+            'Manage the team’s servers: Proxmox virtual machines, Docker deployments, backups and monitoring.',
+            'Built a server-monitor dashboard and Telegram alerts so problems are seen before users report them.',
+            'Deploy and publish apps with Docker, Coolify and Cloudflare Tunnel.',
+            'Built ByteFarm, a hosting sales website with customer portal, invoices, support tickets and card, bank and KHQR payments.',
+            'Run the Factory I/O server used for industrial automation simulation.',
           ],
+          tags: [
+            'Server Management',
+            'Microservices',
+            'Docker',
+            'Proxmox',
+            'PostgreSQL',
+            'Redis',
+            'Cloudflare Tunnel',
+          ],
+        },
+        {
+          role: 'Backend Developer',
+          org: 'EasyEazy Application · Team / Real-World Project',
+          period: '2026 – Present',
+          current: false,
+          icon: ICONS.server,
+          bullets: [
+            'Built the EasyEazy application backend using a professional software architecture.',
+            'Designed and developed a complete management platform with authentication, admin dashboards and role-based permissions.',
+            'Integrated Facebook, Google and native authentication.',
+            'Developed an FCM notification system for real-time alerts.',
+            'Added multiple vendors, each with their own KHQR payment, plus shipping and delivery methods.',
+          ],
+          tags: ['Vendure', 'Nest.js', 'PostgreSQL', 'TypeScript', 'OAuth', 'FCM', 'Facebook', 'KHQR'],
+        },
+        {
+          role: 'Full-Stack Developer',
+          org: 'E-Management Platform · Personal / Academic Project',
+          period: '2025 – 2026',
+          current: false,
+          icon: ICONS.code,
+          bullets: [
+            'Built a full modern E-Management Platform from scratch using a professional software architecture.',
+            'Designed and developed a complete management platform with authentication, admin dashboards and role-based permissions.',
+            'Integrated Redis for caching and performance optimization.',
+            'Developed a Telegram Bot notification system for real-time alerts.',
+            'Added multiple payment methods including Stripe, KHQR Bakong and Cash on Delivery.',
+            'Implemented a chat system for text, image, voice and calls between users.',
+          ],
+          tags: [
+            'Laravel',
+            'Next.js',
+            'PostgreSQL',
+            'Redis',
+            'OAuth2',
+            'Telegram Bot API',
+            'Stripe',
+            'KHQR Bakong',
+          ],
+        },
+        {
+          role: 'Project Developer',
+          org: 'Real-Time Quiz App (DICE) · Team / Academic Project',
+          period: '2024',
+          current: false,
+          icon: ICONS.team,
+          bullets: [
+            'Developed a real-time quiz platform where many students join at the same time.',
+            'Built the web version with Vue.js and the mobile version with Flutter.',
+            'Implemented socket communication for real-time synchronization.',
+          ],
+          tags: ['Vue.js', 'Nest.js', 'Socket.IO', 'Flutter'],
+        },
+        {
+          role: 'Project Developer, E-Commerce',
+          org: 'E-Commerce Platform · Team / Academic Project',
+          period: '2024',
+          current: false,
+          icon: ICONS.code,
+          bullets: [
+            'Developed an e-commerce platform for browsing products and checking out with multiple payment methods.',
+            'Implemented multi-role access (Admin, Vendor, Customer).',
+            'Integrated a microservice for file storage using Go.',
+            'Designed a responsive UI with Next.js for multiple devices.',
+          ],
+          tags: ['Next.js', 'Nest.js', 'MySQL', 'Go', 'OAuth'],
         },
         {
           role: 'Bachelor of Engineering in ICT',
@@ -1024,8 +1206,10 @@ export default {
           current: false,
           icon: ICONS.calendar,
           bullets: [
-            'Data structures, networking, databases, system administration and cloud computing',
+            'Coursework in data structures, networking, databases, system administration and cloud computing.',
+            'Completed an AWS Cloud Computing certificate covering system design, cloud fundamentals and backend architecture.',
           ],
+          tags: ['Networking', 'Databases', 'Cloud Computing'],
         },
       ],
       workflowSteps: [
@@ -1069,34 +1253,65 @@ export default {
       ],
       projects: [
         {
+          slug: 'gcs-drone-delivery',
           name: 'GCS Drone Delivery',
-          category: 'DRDC · Team Lead',
-          description: 'Ground control station for drone delivery operations, led by our team.',
-          tags: ['Drone Delivery', 'Ground Control Station', 'Team Lead'],
+          category: 'DRDC Project',
+          description:
+            'A ground control station for drone delivery operations. Operators plan missions, watch drones in flight and manage deliveries from one dashboard. I lead the team that builds it.',
+          highlights: [
+            'Mission planning and live drone monitoring',
+            'Built and led by the DRDC team',
+            'Runs on servers we manage ourselves',
+          ],
+          tags: ['Drone Delivery', 'Ground Control Station'],
         },
         {
-          name: 'DRDT',
-          category: 'DRDC · Team Lead',
-          description: 'Project work for DRDT, led as Team Lead.',
-          tags: ['Team Lead', 'Project Delivery'],
+          slug: 'drdt',
+          name: 'DRDT (DroneOps AI)',
+          category: 'DRDC Project',
+          description:
+            'A drone delivery and surveillance platform split into independent microservices, so each part can be developed, deployed and scaled on its own.',
+          highlights: [
+            'Microservices architecture',
+            'Delivery and surveillance in one platform',
+            'Deployed and monitored on our own infrastructure',
+          ],
+          tags: ['Microservices', 'Drone Delivery', 'Surveillance', 'Docker'],
         },
         {
+          slug: 'drdc',
           name: 'DRDC',
-          category: 'DRDC · Team Lead',
-          description: 'Project work for DRDC, led as Team Lead.',
-          tags: ['Team Lead', 'Project Delivery'],
+          category: 'DRDC Project',
+          description:
+            'Core DRDC project work, led by our team from planning through delivery and server deployment.',
+          highlights: ['Delivered from planning to release', 'Servers managed by the same team'],
+          tags: ['Project Delivery', 'Server Deployment'],
         },
         {
+          slug: 'factory-io',
           name: 'Factory I/O',
           category: 'Other Project',
-          description: 'Industrial automation simulation for factory scenarios.',
-          tags: ['Industrial Automation', 'Simulation'],
+          description:
+            'An industrial automation simulation for factory scenarios, hosted on our own server and reachable securely through a Cloudflare tunnel.',
+          highlights: [
+            'Self-hosted on our own server',
+            'Secure remote access without opening ports',
+            'Used for automation practice and testing',
+          ],
+          tags: ['Industrial Automation', 'Simulation', 'Cloudflare Tunnel'],
         },
         {
-          name: 'Bytefram',
+          slug: 'bytefarm',
+          name: 'ByteFarm',
           category: 'Other Project',
-          description: 'Project work led as Team Lead.',
-          tags: ['Team Lead'],
+          description:
+            'A web hosting company website with a customer portal. Customers order VPS, hosting and colocation, pay by card, bank transfer or KHQR, and open support tickets. Admins manage plans, orders and invoices.',
+          highlights: [
+            'Customer dashboard, invoices and tickets',
+            'Stripe, bank transfer and KHQR payments',
+            'Admin panel, status page and blog',
+          ],
+          tags: ['Next.js', 'PostgreSQL', 'Redis', 'Docker', 'Coolify'],
         },
       ],
       capabilities: [
@@ -1153,6 +1368,7 @@ export default {
           value: 'kimsrenghai@gmail.com',
           href: 'mailto:kimsrenghai@gmail.com',
           icon: ICONS.mail,
+          wide: true,
         },
         { label: 'Phone', value: '069-376-706', href: 'tel:069376706', icon: ICONS.phone },
         {
@@ -1182,6 +1398,13 @@ export default {
   computed: {
     currentProject() {
       return this.projects[this.activeProject]
+    },
+    currentProjectImage() {
+      const slug = this.currentProject.slug
+      const match = Object.keys(projectImages).find((path) =>
+        new RegExp('/' + slug + '\\.[a-z]+$', 'i').test(path),
+      )
+      return match ? projectImages[match] : null
     },
     projectNumber() {
       return String(this.activeProject + 1).padStart(2, '0')
