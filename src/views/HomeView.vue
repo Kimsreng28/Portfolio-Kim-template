@@ -149,7 +149,7 @@
             class="rise mt-6 text-[clamp(38px,5.6vw,68px)] font-bold leading-[1.08] tracking-tight"
             style="animation-delay: 0.3s"
           >
-            I lead teams that build
+            I learn that build
             <span class="relative inline-block text-blue-600 dark:text-blue-400"
               >drone &amp; automation</span
             >
@@ -512,8 +512,7 @@
                 class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay"
               />
               <span class="relative text-center text-white">
-                <span class="block text-5xl font-bold">❖</span>
-                <span class="block mt-2 text-xs uppercase tracking-[0.2em] opacity-80">DRDC</span>
+
               </span>
             </div>
           </div>
