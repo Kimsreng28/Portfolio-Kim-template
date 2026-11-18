@@ -1,0 +1,10 @@
+services:
+  portfolio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: portfolio-kim:latest
+    ports:
+      # host:container. nginx inside the container listens on 80.
+      - '8086:80'
+    restart: unless-stopped
